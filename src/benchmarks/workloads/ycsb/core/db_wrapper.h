@@ -1,9 +1,8 @@
-//
-//  db_wrapper.h
-//  YCSB-cpp
-//
-//  Copyright (c) 2020 Youngjae Lee <ls4154.lee@gmail.com>.
-//
+/*
+* @details: modified to evaluate the datastructures instead of databases.
+*
+* @author: Cristian Sandu <cristian.sandu@tum.de>
+*/
 
 #ifndef YCSB_C_DB_WRAPPER_H_
 #define YCSB_C_DB_WRAPPER_H_
@@ -24,16 +23,16 @@ class DBWrapper : public DB {
   ~DBWrapper() {
     delete db_;
   }
-  void Init() {
-    db_->Init();
+  int Init() {
+    return db_->Init();
   }
   void Cleanup() {
     db_->Cleanup();
   }
-  Status Read(const std::string &table, const std::string &key,
-              const std::vector<std::string> *fields, std::vector<Field> &result) {
+
+  Status Read(const std::string &table, const uint64_t key) {
     timer_.Start();
-    Status s = db_->Read(table, key, fields, result);
+    Status s = db_->Read(table, key);
     uint64_t elapsed = timer_.End();
     if (s == kOK) {
       measurements_->Report(READ, elapsed);
@@ -42,10 +41,10 @@ class DBWrapper : public DB {
     }
     return s;
   }
-  Status Scan(const std::string &table, const std::string &key, int record_count,
-              const std::vector<std::string> *fields, std::vector<std::vector<Field>> &result) {
+
+  Status Scan(const std::string &table, const uint64_t key, int len) {
     timer_.Start();
-    Status s = db_->Scan(table, key, record_count, fields, result);
+    Status s = db_->Scan(table, key, len);
     uint64_t elapsed = timer_.End();
     if (s == kOK) {
       measurements_->Report(SCAN, elapsed);
@@ -54,9 +53,10 @@ class DBWrapper : public DB {
     }
     return s;
   }
-  Status Update(const std::string &table, const std::string &key, std::vector<Field> &values) {
+
+  Status Update(const std::string &table, const uint64_t key, const uint64_t value) {
     timer_.Start();
-    Status s = db_->Update(table, key, values);
+    Status s = db_->Update(table, key, value);
     uint64_t elapsed = timer_.End();
     if (s == kOK) {
       measurements_->Report(UPDATE, elapsed);
@@ -65,9 +65,9 @@ class DBWrapper : public DB {
     }
     return s;
   }
-  Status Insert(const std::string &table, const std::string &key, std::vector<Field> &values) {
+  Status Insert(const std::string &table, uint64_t key, uint64_t value) {
     timer_.Start();
-    Status s = db_->Insert(table, key, values);
+    Status s = db_->Insert(table, key, value);
     uint64_t elapsed = timer_.End();
     if (s == kOK) {
       measurements_->Report(INSERT, elapsed);
@@ -76,7 +76,7 @@ class DBWrapper : public DB {
     }
     return s;
   }
-  Status Delete(const std::string &table, const std::string &key) {
+  Status Delete(const std::string &table, const uint64_t key) {
     timer_.Start();
     Status s = db_->Delete(table, key);
     uint64_t elapsed = timer_.End();

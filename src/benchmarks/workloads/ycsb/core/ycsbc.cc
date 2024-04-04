@@ -1,10 +1,8 @@
-//
-//  ycsbc.cc
-//  YCSB-cpp
-//
-//  Copyright (c) 2020 Youngjae Lee <ls4154.lee@gmail.com>.
-//  Copyright (c) 2014 Jinglei Ren <jinglei@ren.systems>.
-//
+/*
+* @details: modified to evaluate the datastructures instead of databases.
+*
+* @author: Cristian Sandu <cristian.sandu@tum.de>
+*/
 
 #include <cstring>
 #include <ctime>
@@ -163,7 +161,6 @@ int main(const int argc, const char *argv[]) {
 
   measurements->Reset();
   std::this_thread::sleep_for(std::chrono::seconds(stoi(props.GetProperty("sleepafterload", "0"))));
-
 
   // transaction phase
   if (do_transaction) {
