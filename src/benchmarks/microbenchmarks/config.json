@@ -1,0 +1,25 @@
+{
+    "threadnum": 1,
+    "capacity": 10000,
+    "repetitions": 10,
+
+    "__distribution_types": "[uniform, zipfian]",
+    "distribution": "zipfian",
+
+    "performfill": {
+        "__comment": "the first operation",
+        "filling_factor": 0.9
+    },
+
+    "performquery": {
+        "__comment": "the second operation",
+        "query_factor":   0.7,
+        "success_factor": 0.5
+    },
+
+    "performdeletion": {
+        "__comment": "the thrid operation",
+        "deletion_factor":  0.4,
+        "success_factor":   1
+    }
+}
