@@ -2,12 +2,19 @@
     "target": {
         "__comment": "which datastructures will be evaluated",
 
-        "clht_lb": "./structures/clht_lb.so"
+        "__clht_lb": "./structures/clht_lb.so",
+        "cuckoo": "./structures/cuckoo.so"
     },
     "mbench_1": {
-        "threadnum": 1,
+        "__comment": "the threadnum should be a list [] - usecases",
+        "threadnum": [1, 2, 4],
         "capacity": 100000,
         "repetitions": 5,
+        "perf": {
+            "do_profiling": true,
+            "repetitions": 1
+        },
+
         "granularity": 25,
         "output_path": "output/mbench_1",
     
@@ -15,20 +22,68 @@
         "distribution": "zipfian",
     
         "performfill": {
-            "__comment": "the first operation",
-            "filling_factor": 0.9
+            "filling_factor": 0.95
         },
     
         "performquery": {
-            "__comment": "the second operation",
             "query_factor":   0.7,
             "success_factor": 0.5
         },
     
         "performdeletion": {
-            "__comment": "the thrid operation",
-            "deletion_factor":  0.4,
-            "success_factor":   1
+            "deletion_factor":  0.7,
+            "success_factor":   0.5
+        }
+    },
+    "ycsb": {
+        "repetitions": 5,
+        "output_path": "output/ycsb",
+
+        "__comment": "to execute load phase before each workload",
+        "phase_load": true,
+
+        "workloads": {
+            "workloada": {
+                "recordcount": 1000000,
+                "operationcount": 1000000,
+                "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
+    
+                "readallfields": true,
+    
+                "readproportion": 0.95,
+                "updateproportion": 0.05,
+                "scanproportion": 0,
+                "insertproportion": 0,
+                "requestdistribution": "zipfian"
+            },
+            "workloadb": {
+                "recordcount": 1000000,
+                "operationcount": 1000000,
+                "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
+
+                "readallfields": true,
+
+                "readproportion": 0.95,
+                "updateproportion": 0.05,
+                "scanproportion": 0,
+                "insertproportion": 0,
+
+                "requestdistribution": "zipfian"
+            },
+            "workloadc": {
+                "recordcount": 1000000,
+                "operationcount": 1000000,
+                "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
+
+                "readallfields": true,
+
+                "readproportion": 1,
+                "updateproportion": 0,
+                "scanproportion": 0,
+                "insertproportion": 0,
+
+                "requestdistribution": "zipfian"
+            }
         }
     }
 }

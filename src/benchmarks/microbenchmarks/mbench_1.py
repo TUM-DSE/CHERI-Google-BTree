@@ -15,7 +15,8 @@ import subprocess, json, tempfile, os
 
 class MBench_1:
     NAME_EXECUTABLE  = f'{os.path.dirname(os.path.abspath(__file__))}/mbench_1'
-    RESULT_FILE_NAME = 'generic_output.out'
+    RESULT_FILE_NAME = 'generic_output'
+    PERF_RESULT      = 'perf_data.out'
 
     def __init__(self, config: dict):
         self.__config     = config
@@ -24,28 +25,43 @@ class MBench_1:
     def __prepare_dir(self):
         os.makedirs(self.__outputpath, exist_ok=True)
 
-    def __parse_results(self, lines: list[str]) -> dict:
+    def __parse_results_performance(self, lines: list[str]) -> dict:
         data = defaultdict(lambda: [])
         for line in lines:
             function_name, thread_id, key_num, key, value, status, start_time, end_time = line.split(' ')
             data[function_name].append(int(int(end_time) - int(start_time)))
         return data
 
+    def __parse_results_memory(self, lines: list[str]) -> dict:
+        data = defaultdict(lambda: [])
+        for line in lines:
+            function_name, thread_id, key_num, memory_usage = line.split(' ')
+            data[function_name].append(int(memory_usage))
+        return data
+
     def __perform_bechmark(self, libso_path: str, config_path: str) -> list[str]:
-        process = subprocess.Popen([MBench_1.NAME_EXECUTABLE, libso_path,
-                                    config_path, MBench_1.RESULT_FILE_NAME])
+        process = subprocess.Popen([MBench_1.NAME_EXECUTABLE, libso_path, config_path, MBench_1.RESULT_FILE_NAME])
         exit_code = process.wait()
         if exit_code != 0: raise Exception(f'MBench_1 filed during execution, exit-code: {exit_code}')
-        return self.__parse_results(open(MBench_1.RESULT_FILE_NAME, 'r').readlines())
+        
+        return {
+            'performance': self.__parse_results_performance(
+                open(f'{MBench_1.RESULT_FILE_NAME}_performance.out', 'r').readlines()),
+            'memory': self.__parse_results_memory(
+                open(f'{MBench_1.RESULT_FILE_NAME}_memory.out', 'r').readlines())
+        }
 
     def perform_benchmark(self, libso_path: str):
-        with tempfile.NamedTemporaryFile(mode='w') as temp:
-            json.dump(self.__config, temp)
-            temp.flush()
-            
-            self.__bresults = []
-            for _ in range(self.__config['repetitions']):
-                self.__bresults.append(self.__perform_bechmark(libso_path=libso_path, config_path=temp.name))
+        self.__bresults = defaultdict(lambda: [])
+        for threadnum in self.__config['threadnum']:
+            with tempfile.NamedTemporaryFile(mode='w') as temp:
+                # rescale for the given threads
+                config = self.__config.copy()
+                config['threadnum'] = threadnum
+                json.dump(config, temp)
+                temp.flush()
+                for _ in range(self.__config['repetitions']):
+                    self.__bresults[threadnum].append(self.__perform_bechmark(libso_path=libso_path, config_path=temp.name))
 
     def plot_results(self, result_name: str):
         self.__outputpath = f"{self.__config['output_path']}/{result_name}"
@@ -53,29 +69,70 @@ class MBench_1:
 
         self.__plot_dataset_performfill()
         self.__plot_dataset_performquery()
+        self.__plot_dataset_performdeletion()
 
-    def __plot_dataset_performfill(self):
+        self.__plot_memory_performfill()
+    
+    def __plot_memory_performfill(self):
         capacity       = self.__config['capacity']
+        threadnum      = self.__config['threadnum']
         granularity    = self.__config['granularity']
         repetitions    = self.__config['repetitions']
         filling_factor = self.__config['performfill']['filling_factor']
 
-        average_data = [0] * granularity
-        for dataset in self.__bresults:
-            data = dataset['dataset_performfill']
-            data_index, size_data = [], len(data)
-            for i in range(0, granularity): 
-                if i == 0:  data_index.append(0)
-                else:       data_index.append(size_data * 100 / (capacity) * i/granularity)
-                left_range  = int(len(data) * i    /granularity)
-                right_range = int(len(data) * (i+1)/granularity)
-                average_data[i] += sum(data[left_range : right_range]) / len(data[left_range : right_range])
-        average_data = [x/granularity for x in average_data]
+        average_data = defaultdict(lambda: [0] * granularity)
+        for threadnum, datasets in self.__bresults.items():
+            for dataset in datasets:
+                data = dataset['memory']['dataset_performfill']
+                data_index, size_data = [], len(data)
+                for i in range(0, granularity): 
+                    if i == 0:  data_index.append(0)
+                    else:       data_index.append(100*i/granularity)
+                    left_range  = int(len(data) * i    /granularity)
+                    right_range = int(len(data) * (i+1)/granularity)
+                    average_data[threadnum][i] += sum(data[left_range : right_range]) / len(data[left_range : right_range])
+            average_data[threadnum] = [x/granularity for x in average_data[threadnum]]
+            average_data[threadnum] = [x/1024.0 for x in average_data[threadnum]]
 
-        plt.plot(data_index, average_data, marker='o', label='Program Duration')
+        for threadnum in self.__bresults:
+            plt.plot(data_index, average_data[threadnum], label = f'thread no. {threadnum}')
+        plt.xlabel('percentage of ds. usage %')
+        plt.ylabel('memory usage (kbytes)')
+        plt.title(f'[mem_performfill] memory usage ds_insert (no.threads:{threadnum}: {repetitions}, gran.: {granularity}, cap.: {capacity}, fill fact.: {filling_factor})')
+        plt.grid(True)
+        plt.legend()
+
+        plt.savefig(f'{self.__outputpath}/mem_performfill.png', dpi=300, bbox_inches = "tight")
+        plt.show()
+        plt.clf()
+
+    def __plot_dataset_performfill(self):
+        capacity       = self.__config['capacity']
+        threadnum      = self.__config['threadnum']
+        granularity    = self.__config['granularity']
+        repetitions    = self.__config['repetitions']
+        filling_factor = self.__config['performfill']['filling_factor']
+
+        average_data = defaultdict(lambda: [0] * granularity)
+        for threadnum, datasets in self.__bresults.items():
+            for dataset in datasets:
+                dataset = dataset['performance']
+
+                data = dataset['dataset_performfill']
+                data_index, size_data = [], len(data)
+                for i in range(0, granularity): 
+                    if i == 0:  data_index.append(0)
+                    else:       data_index.append(100*i/granularity)
+                    left_range  = int(len(data) * i    /granularity)
+                    right_range = int(len(data) * (i+1)/granularity)
+                    average_data[threadnum][i] += sum(data[left_range : right_range]) / len(data[left_range : right_range])
+            average_data[threadnum] = [x/granularity for x in average_data[threadnum]]
+
+        for threadnum in self.__bresults:
+            plt.plot(data_index, average_data[threadnum], label = f'thread no. {threadnum}')
         plt.xlabel('percentage of ds. usage %')
         plt.ylabel('latency (ns)')
-        plt.title(f'[dataset_performfill] latency ds_insert (rep.: {repetitions}, gran.: {granularity}, cap.: {capacity}, fill fact.: {filling_factor})')
+        plt.title(f'[dataset_performfill] latency ds_insert (no.threads:{threadnum}, rep.: {repetitions}, gran.: {granularity}, cap.: {capacity}, fill fact.: {filling_factor})')
         plt.grid(True)
         plt.legend()
 
@@ -85,30 +142,33 @@ class MBench_1:
 
     def __plot_dataset_performquery(self):
         capacity       = self.__config['capacity']
+        threadnum      = self.__config['threadnum']
         granularity    = self.__config['granularity']
         repetitions    = self.__config['repetitions']
         query_factor   = self.__config['performquery']['query_factor']
         success_factor = self.__config['performquery']['success_factor']
 
-        data_index, data_len = [], len(self.__bresults[0]['dataset_performqueries'])
-        for i in range(0, granularity): 
-            if i == 0:  data_index.append(0)
-            else:       data_index.append(data_len * i/granularity)
-
-        average_data = [0] * granularity
-        for dataset in self.__bresults:
-            data  = dataset['dataset_performqueries']
+        average_data = defaultdict(lambda: [0] * granularity)
+        for threadnum, datasets in self.__bresults.items():
+            data_index, data_len = [], len(datasets[0]['performance']['dataset_performqueries'])
             for i in range(0, granularity): 
-                left_range  = int(len(data) * i    /granularity)
-                right_range = int(len(data) * (i+1)/granularity)
-                if  len(data[left_range : right_range]) == 0: continue
-                average_data[i] += sum(data[left_range : right_range]) / len(data[left_range : right_range])
-        average_data = [x/granularity for x in average_data]
+                if i == 0:  data_index.append(0)
+                else:       data_index.append(data_len * i/granularity)
 
-        plt.plot(data_index, average_data, marker='o', label='Program Duration')
+            for dataset in datasets:
+                data  = dataset['performance']['dataset_performqueries']
+                for i in range(0, granularity): 
+                    left_range  = int(len(data) * i    /granularity)
+                    right_range = int(len(data) * (i+1)/granularity)
+                    if  len(data[left_range : right_range]) == 0: continue
+                    average_data[threadnum][i] += sum(data[left_range : right_range]) / len(data[left_range : right_range])
+            average_data[threadnum] = [x/granularity for x in average_data[threadnum]]
+
+        for threadnum in self.__bresults:
+            plt.plot(data_index, average_data[threadnum], label = f'thread no. {threadnum}')
         plt.xlabel('number of queries')
         plt.ylabel('latency (ns)')
-        plt.title(f'[dataset_performquery] latency ds_read (rep.: {repetitions}, gran.: {granularity}, cap.: {capacity}, rate: {query_factor}, succ.: {success_factor*100}%)')
+        plt.title(f'[dataset_performquery] latency ds_read (no.threads{threadnum}, rep.: {repetitions}, gran.: {granularity}, cap.: {capacity}, rate: {query_factor}, succ.: {success_factor*100}%)')
         plt.grid(True)
         plt.legend()
 
@@ -116,26 +176,64 @@ class MBench_1:
         plt.show()
         plt.clf()
 
-    def plot_dataset_performdeletion(data: dict[list], config: dict) -> list[str]:
-        data = data['dataset_performdeletion']
-        capacity       = config['capacity']
+    def __plot_dataset_performdeletion(self):
+        capacity        = self.__config['capacity']
+        threadnum       = self.__config['threadnum']
+        granularity     = self.__config['granularity']
+        repetitions     = self.__config['repetitions']
+        deletion_factor = self.__config['performdeletion']['deletion_factor']
+        success_factor  = self.__config['performdeletion']['success_factor']
 
-        data_normalized = []
-        data_index, size_data = [], len(data)
-        for i in range(0, 20): 
-            if i == 0:  data_index.append(0)
-            else:       data_index.append(size_data * 100 / (capacity) * i/20)
-            left_range  = int(len(data) * i/20)
-            right_range = int(len(data) * (i+1)/20)
-            data_normalized.append(sum(data[left_range : right_range]) / len(data[left_range : right_range]))
+        average_data = defaultdict(lambda: [0] * granularity)
+        for threadnum, datasets in self.__bresults.items():
+            data_index, data_len = [], len(datasets[0]['performance']['dataset_performdeletion'])
+            for i in range(0, granularity): 
+                if i == 0:  data_index.append(0)
+                else:       data_index.append(data_len * i/granularity)
 
-        plt.plot(data_index, data_normalized, marker='o', label='Program Duration')
-        plt.xlabel('percentage of ds. usage %')
+            for dataset in datasets:
+                dataset = dataset['performance']
+                data = dataset['dataset_performdeletion']
+                for i in range(0, granularity): 
+                    left_range  = int(len(data) * i    /granularity)
+                    right_range = int(len(data) * (i+1)/granularity)
+                    average_data[threadnum][i] += sum(data[left_range : right_range]) / len(data[left_range : right_range])
+            average_data[threadnum] = [x/granularity for x in average_data[threadnum]]
+
+        for threadnum in self.__bresults:
+            plt.plot(data_index, average_data[threadnum], label = f'thread no. {threadnum}')
+        plt.xlabel('number of deletions')
         plt.ylabel('latency (ns)')
-        plt.title('[dataset_performfill] latency ds_insert')
+        plt.title(f'[dataset_performdeletion] latency ds_remove (no.threads:{threadnum}, rep.: {repetitions}, gran.: {granularity}, cap.: {capacity}, del fact.: {deletion_factor}, succ.: {success_factor})')
         plt.grid(True)
         plt.legend()
 
-        plt.savefig(f'{INITIAL_STR}_performdeletion.png')
+        plt.savefig(f'{self.__outputpath}/performdeletion.png', dpi=300, bbox_inches = "tight")
         plt.show()
         plt.clf()
+
+    def __perform_perf_profilling(self, libso_path: str, config_path: str) -> dict:
+        """
+            Perform the perf_profilling over self.perform_benchmark. The execution
+            is slow
+        """
+        process = subprocess.Popen(['perf', 'record', '-ag', '-e LLC-stores,LLC-store-misses,LLC-prefetch-misses', 
+                                    MBench_1.NAME_EXECUTABLE, libso_path, config_path, MBench_1.RESULT_FILE_NAME])
+        exit_code = process.wait()
+        if exit_code != 0: raise Exception(f'MBench_1 filed during execution, exit-code: {exit_code}')
+
+        process = subprocess.Popen(['perf', 'data', 'convert','--force', '--to-json', MBench_1.PERF_RESULT])
+        exit_code = process.wait()
+        if exit_code != 0: raise Exception(f'MBench_1 filed during execution, exit-code: {exit_code}')
+
+        return json.load(open(MBench_1.PERF_RESULT, 'r'))
+    
+    def perform_perf_profilling(self, libso_path: str):
+        with tempfile.NamedTemporaryFile(mode='w') as temp:
+            json.dump(self.__config, temp)
+            temp.flush()
+            
+            self.__bresults = []
+            for _ in range(self.__config['perf']['repetitions']):
+                result = self.__perform_perf_profilling(libso_path=libso_path, config_path=temp.name)
+        

@@ -110,7 +110,6 @@ int main(const int argc, const char *argv[]) {
     }
     dbs.push_back(db);
   }
-
   ycsbc::CoreWorkload wl;
   wl.Init(props);
 
@@ -137,7 +136,6 @@ int main(const int argc, const char *argv[]) {
       if (i < total_ops % num_threads) {
         thread_ops++;
       }
-
       client_threads.emplace_back(std::async(std::launch::async, ycsbc::ClientThread, dbs[i], &wl,
                                              thread_ops, true, true, !do_transaction, &latch, nullptr));
     }

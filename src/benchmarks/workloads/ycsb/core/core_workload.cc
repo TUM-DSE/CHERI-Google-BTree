@@ -322,7 +322,7 @@ DB::Status CoreWorkload::TransactionUpdate(DB &db) {
   uint64_t key_num = transaction_insert_key_sequence_->Next();
   uint64_t key     = BuildKeyName(key_num);
   uint64_t value   = transaction_insert_key_sequence_->Next();
-  return db.Insert(table_name_, key, value);
+  return db.Update(table_name_, key, value);
 }
 
 DB::Status CoreWorkload::TransactionInsert(DB &db) {

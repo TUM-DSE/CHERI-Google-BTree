@@ -45,6 +45,7 @@ extern int         (*ds_insert)(void*, uint64_t, uint64_t);
 extern int         (*ds_remove)(void*, uint64_t);
 extern int         (*ds_read)(void*, uint64_t);
 extern int         (*ds_read_range)(void*, uint64_t, uint64_t);
+extern uint64_t    (*ds_get_size)(void*);
 
 uint64_t initialize(std::string libpath);
 
@@ -55,6 +56,7 @@ public:
         uint64_t key, uint64_t value, uint64_t status,
         std::chrono::time_point<std::chrono::system_clock> start_time, 
         std::chrono::time_point<std::chrono::system_clock> end_time);
+    void add_log_mem(std::string function_name, uint64_t thread_id, uint64_t key_num, uint64_t memory_usage);
     void save_logfile();
     void set_name(std::string log_name) { this->log_name = log_name; }
 private:
@@ -74,11 +76,10 @@ public:
     void wait() {
         std::unique_lock<std::mutex> lock(mtx);
         count += 1;
-        if (count == num_threads) {
+        if (count % num_threads == 0) {
             cv.notify_all();
-            count = 0;
         } else {
-            cv.wait(lock, [this] { return count == num_threads; });
+            cv.wait(lock, [this] { return count % num_threads == 0; });
         }
     }
 

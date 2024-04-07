@@ -19,7 +19,24 @@ namespace ycsbc {
 
 class DBWrapper : public DB {
  public:
-  DBWrapper(DB *db, Measurements *measurements) : db_(db), measurements_(measurements) {}
+  /* the datastructure pointer */
+  void*       libhandle = nullptr;
+  void*       generic_structure = nullptr;
+  std::string libpath;
+
+  void*       (*ds_init)();
+  int         (*ds_insert)(void*, uint64_t, uint64_t);
+  int         (*ds_remove)(void*, uint64_t);
+  int         (*ds_read)(void*, uint64_t);
+  int         (*ds_update)(void*, uint64_t, uint64_t);
+  int         (*ds_read_range)(void*, uint64_t, uint64_t);
+
+
+  DBWrapper(DB *db, Measurements *measurements) : db_(db), measurements_(measurements) {
+    int result = db_->load_functions();
+    if (result != 0) { throw std::runtime_error("could not load the libso (or functions)"); }
+  }
+
   ~DBWrapper() {
     delete db_;
   }
@@ -65,6 +82,7 @@ class DBWrapper : public DB {
     }
     return s;
   }
+
   Status Insert(const std::string &table, uint64_t key, uint64_t value) {
     timer_.Start();
     Status s = db_->Insert(table, key, value);
@@ -76,6 +94,7 @@ class DBWrapper : public DB {
     }
     return s;
   }
+
   Status Delete(const std::string &table, const uint64_t key) {
     timer_.Start();
     Status s = db_->Delete(table, key);
@@ -87,6 +106,7 @@ class DBWrapper : public DB {
     }
     return s;
   }
+
  private:
   DB *db_;
   Measurements *measurements_;

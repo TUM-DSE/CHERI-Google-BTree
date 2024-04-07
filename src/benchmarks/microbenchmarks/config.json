@@ -1,25 +1,33 @@
-{
-    "threadnum": 1,
-    "capacity": 10000,
-    "repetitions": 10,
 
-    "__distribution_types": "[uniform, zipfian]",
-    "distribution": "zipfian",
+{"__comment": "the threadnum should be a list [] - usecases",
+"threadnum": 2,
+"capacity": 100,
+"repetitions": 5,
+"perf": {
+    "do_profiling": true,
+    "repetitions": 1
+},
 
-    "performfill": {
-        "__comment": "the first operation",
-        "filling_factor": 0.9
-    },
+"granularity": 25,
+"output_path": "output/mbench_1",
 
-    "performquery": {
-        "__comment": "the second operation",
-        "query_factor":   0.7,
-        "success_factor": 0.5
-    },
+"__distribution_types": "[uniform, zipfian]",
+"distribution": "zipfian",
 
-    "performdeletion": {
-        "__comment": "the thrid operation",
-        "deletion_factor":  0.4,
-        "success_factor":   1
-    }
+"performfill": {
+    "__comment": "the first operation",
+    "filling_factor": 0.95
+},
+
+"performquery": {
+    "__comment": "the second operation",
+    "query_factor":   0.7,
+    "success_factor": 0.5
+},
+
+"performdeletion": {
+    "__comment": "the thrid operation",
+    "deletion_factor":  1,
+    "success_factor":   0.4
+}
 }

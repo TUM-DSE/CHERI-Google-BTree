@@ -27,6 +27,7 @@ int         (*ds_insert)(void*, uint64_t, uint64_t);
 int         (*ds_remove)(void*, uint64_t);
 int         (*ds_read)(void*, uint64_t);
 int         (*ds_read_range)(void*, uint64_t, uint64_t);
+uint64_t    (*ds_get_size)(void*);
 
 /* hashing function */
 uint64_t            (*hash_fn)(uint64_t);
@@ -37,7 +38,8 @@ std::mutex            g_mutex;
 Barrier               tbarrier;
 
 /* data extracted from the program */
-LogFile logfile("");
+LogFile logfilePerformance("");
+LogFile logfileMemory("");
 
 uint64_t next_value() {
     static uint64_t current_value = 0;
@@ -59,9 +61,11 @@ void dataset_performfill(const size_t thread_id, void* ds,
         const uint64_t value    = hash_fn(next_value());
 
         MEASURE_TIME(ds_insert(ds, key, value),  start_time, end_time, status);
-        logfile.add_log("dataset_performfill", thread_id, key_num, key, value, status, start_time, end_time);
+        logfilePerformance.add_log("dataset_performfill", thread_id, key_num, key, value, status, start_time, end_time);
 
         g_mutex.lock();
+        uint64_t memory_usage = ds_get_size(ds);
+        logfileMemory.add_log_mem("dataset_performfill", thread_id, key_num, memory_usage);
         used_keys.push_back(key_num);
         g_mutex.unlock();
     }
@@ -86,7 +90,7 @@ void dataset_performqueries(const size_t thread_id, void* ds,
 
         const uint64_t key      = hash_fn(key_num);
         MEASURE_TIME(ds_read(ds, key),  start_time, end_time, status);
-        logfile.add_log("dataset_performqueries", thread_id, key_num, key, 0, status, start_time, end_time);
+        logfilePerformance.add_log("dataset_performqueries", thread_id, key_num, key, 0, status, start_time, end_time);
     }
 }
 
@@ -99,26 +103,33 @@ void dataset_performdeletion(const size_t thread_id, void* ds,
     std::chrono::time_point<std::chrono::system_clock> start_time, end_time;    
     for (uint64_t i=0; i<capacity; i++) {
         uint64_t key_num = 0;
-        if (success_count < success_capacity) {
-            if (i % (capacity / success_capacity) == 0) {
-                success_count += 1;
+        if (success_capacity > 0 && i % (capacity / success_capacity) == 0) {
+            g_mutex.lock();
+            uint64_t index_random = rand() % used_keys.size();
+            while(used_keys[index_random] == -1) { index_random = rand() % used_keys.size(); }
 
-                g_mutex.lock();
-                key_num   = used_keys[rand() % used_keys.size()];
-                g_mutex.unlock();
-            }
+            key_num   = used_keys[index_random];
+            used_keys[index_random] = -1;
+            g_mutex.unlock();
         } else {
             key_num  = next_value();
         }
         const uint64_t key      = hash_fn(key_num);
 
         MEASURE_TIME(ds_remove(ds, key),  start_time, end_time, status);
-        logfile.add_log("dataset_performdeletion", thread_id, key_num, key, 0, status, start_time, end_time);
+        logfilePerformance.add_log("dataset_performdeletion", thread_id, key_num, key, 0, status, start_time, end_time);
     }
 }
 
 void benchmark_threads(const uint64_t threadid, nlohmann::json config_data, const uint64_t num_threads,
                        void *ds, const uint64_t capacity) {
+    #ifdef DIFF_CPU_EXEC
+        /* each thread will be executed on a different CPU */
+        pthread_t self = pthread_self();
+        cpu_set_t cpuset;
+        CPU_ZERO(&cpuset);
+        CPU_SET(threadid, &cpuset);
+    #endif
     ds_thread_init(ds);
 
     const double   filling_factor  = config_data["performfill"]["filling_factor"];
@@ -138,7 +149,7 @@ void benchmark_threads(const uint64_t threadid, nlohmann::json config_data, cons
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        std::cerr << "[error] format: <path to so> <path to config file> <output file name>" << std::endl;
+        std::cerr << "[error] format: <path to so> <path to config file> <log file name>" << std::endl;
         exit(1);
     }
     srand(time(NULL));      /* prepare the randomness */
@@ -147,9 +158,16 @@ int main(int argc, char *argv[]) {
 
     std::ifstream f(argv[2]);
     nlohmann::json config_data = nlohmann::json::parse(f);
-    logfile.set_name(argv[3]);
+    logfilePerformance.set_name(std::string(argv[3]) + "_performance.out");
+    logfileMemory.set_name(std::string(argv[3]) + "_memory.out");
 
     const uint64_t num_threads = config_data["threadnum"];
+    if (std::thread::hardware_concurrency() < num_threads) {
+        std::cerr << "[error] the CPU has only " << std::thread::hardware_concurrency()
+                << " while the threads num. is " << num_threads << std::endl;
+        exit(1);
+    }
+
     if (initialize(libpath) != 0) {
         std::cerr << "[error] failed: " << std::endl;
         exit(1);
@@ -173,6 +191,7 @@ int main(int argc, char *argv[]) {
     const uint64_t thread_capacity = capacity/num_threads;
     EXECUTE_PARALLEL(num_threads, benchmark_threads, config_data, num_threads, ds, capacity);
 
-    logfile.save_logfile();
+    logfilePerformance.save_logfile();
+    logfileMemory.save_logfile();
     return 0;
 }

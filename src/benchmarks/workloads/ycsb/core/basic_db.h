@@ -36,17 +36,6 @@ class BasicDB : public DB {
   static std::mutex mutex_;
 
   std::ostream *out_;
-  
-  /* the datastructure pointer */
-  void*       libhandle = nullptr;
-  void*       generic_structure = nullptr;
-  std::string libpath;
-
-  void*       (*ds_init)();
-  int         (*ds_insert)(void*, uint64_t, uint64_t);
-  int         (*ds_remove)(void*, uint64_t);
-  int         (*ds_read)(void*, uint64_t);
-  int         (*ds_read_range)(void*, uint64_t, uint64_t);
 };
 
 DB *NewBasicDB();

@@ -48,6 +48,12 @@ uint64_t initialize(std::string libpath) {
     std::cerr << "unable to load the function ds_read_range from the library " << libpath << std::endl;
     return 1;
   }
+
+  ds_get_size = (uint64_t (*)(void*))dlsym(libhandle, "ds_get_size");
+  if (ds_remove == nullptr) {
+    std::cerr << "unable to load the function ds_get_size from the library " << libpath << std::endl;
+    return 1;
+  }
   return 0;
 }
 
@@ -75,6 +81,17 @@ void LogFile::add_log(std::string function_name, uint64_t thread_id, uint64_t ke
             << " " << std::chrono::duration_cast<std::chrono::nanoseconds>(dend_time).count();
     this->latency_logs.push_back(log_entry.str());
     g_mutex.unlock();
+}
+
+void LogFile::add_log_mem(std::string function_name, uint64_t thread_id, uint64_t key_num, uint64_t memory_usage) {
+  std::ostringstream log_entry;
+  g_mutex.lock();
+  log_entry << function_name
+            << " " << thread_id
+            << " " << key_num
+            << " " << memory_usage;
+  this->latency_logs.push_back(log_entry.str());
+  g_mutex.unlock();
 }
 
 void LogFile::save_logfile() {
