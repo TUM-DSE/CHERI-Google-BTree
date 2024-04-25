@@ -46,3 +46,13 @@ _deps
 
 # binary ycsb
 workloads/ycsb/ycsb
+
+#output
+output/*
+
+# python
+__pycache__
+*.pyc
+
+# vscode
+.vscode
