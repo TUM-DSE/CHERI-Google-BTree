@@ -1,7 +1,5 @@
 # CHERI-DB - Evaluation Framework
 
-made with love in the heart of Bavaria by an enthusiastic TUM team.
-
 ## TODO: The documentation will be completed over time.
 
 ## Configuration File
