@@ -1,0 +1,15 @@
+[submodule "structures/CLHT"]
+	path = structures/CLHT
+	url = git@github.com:LPD-EPFL/CLHT.git
+[submodule "structures/cuckoo-trie-code"]
+	path = structures/cuckoo-trie-code
+	url = git@github.com:cuckoo-trie/cuckoo-trie-code.git
+[submodule "structures/libcuckoo"]
+	path = structures/libcuckoo
+	url = git@github.com:efficient/libcuckoo.git
+[submodule "structures/hot"]
+	path = structures/hot
+	url = git@github.com:speedskater/hot.git
+[submodule "structures/oneTBB"]
+	path = structures/oneTBB
+	url = git@github.com:oneapi-src/oneTBB.git
