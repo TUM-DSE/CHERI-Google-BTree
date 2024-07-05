@@ -16,3 +16,6 @@
 [submodule "src/benchmarks/microbenchmarks/jsonutility"]
 	path = src/benchmarks/microbenchmarks/jsonutility
 	url = git@github.com:nlohmann/json.git
+[submodule "src/perf/perforator"]
+	path = src/perf/perforator
+	url = git@github.com:zyedidia/perforator.git
