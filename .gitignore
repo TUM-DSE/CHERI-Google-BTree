@@ -56,3 +56,8 @@ __pycache__
 
 # vscode
 .vscode
+
+*.core
+.idea
+*.diff
+.DS_Store
