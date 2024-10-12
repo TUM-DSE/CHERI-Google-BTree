@@ -3,7 +3,13 @@
 */
 
 #include "structure_interface.h"
-#include "clht.h"
+
+#ifdef CLHT_LB
+	#include "clht_lb.h"
+#else
+	#include "clht_lf.h"
+#endif
+
 
 #define MEM_SIZE            8
 #define MAXIMUM_BUCKET_NUM  131072 /* power of 2 */
