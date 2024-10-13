@@ -39,4 +39,24 @@ Test CLHT:
   ./clht_lf -b 1024
 ```
 
+### oneTBB 
+
+Choosing the build type - release/debug. For the hashtable, only `tbb` must be built from the entire project.
+```
+  cmake -DCMAKE_BUILD_TYPE=Release .
+  or
+  cmake -DCMAKE_BUILD_TYPE=Debug .
+  make tbb
+```
+
+Source the path to be used during evaluation.
+```
+ # for release
+ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/cristian/cheridb/structures/oneTBB/clang_14.0_cxx11_64_release
+ # for debug
+ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/cristian/cheridb/structures/oneTBB/clang_14.0_cxx11_64_relwithdebinfo
+```
+
+Copy the resulted `.so` to `./lib`.
+
 
