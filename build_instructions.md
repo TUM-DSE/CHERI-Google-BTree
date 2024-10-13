@@ -8,17 +8,21 @@ Inside the `CLHT\externa` are two submodules: `ssmem` and `sspfd`.
 
 #### SSMEM
 ```
-  cd CLHT/external/ssmem && gmake -f Makefile_ace
-  cp CLHT/external/ssmem/libssmem.a CLHT/external/lib
-  cp CLHT/external/ssmem/include/ssmem.h CLHT/external/include
+  cd CLHT/external/ssmem
+  gmake -f Makefile_ace
+  cp libssmem.a ../lib
+  cp include/ssmem.h ../include
+  cd ../../..
 ```
 You can run the tests `ssmem_test` to check if the lib works (it must work).
 
 #### SSPDF
 ```
-  cd CLHT/external/sspfd && gmake -f Makefile libsspfd.a
-  cp CLHT/external/sspfd/libsspfd.a CLHT/external/lib
-  cp CLHT/external/sspfd/sspfd.h CLHT/external/include
+  cd CLHT/external/sspfd
+  gmake -f Makefile libsspfd.a
+  cp libsspfd.a ../lib
+  cp sspfd.h ../include
+  cd ../../..
 ```
 
 Build CLHT directory
