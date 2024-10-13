@@ -25,3 +25,12 @@ Build CLHT directory
 ```
   cd CLHT && gmake -f Makefile_ace
 ```
+
+Test CLHT:
+```
+  # lock base approach
+  ./clht_lb
+
+  # lock free approach !!! the -b (buckets) must be a power of 2!!!!
+  ./clht_lf -b 1024
+```
