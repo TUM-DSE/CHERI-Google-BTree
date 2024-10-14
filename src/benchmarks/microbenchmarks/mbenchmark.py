@@ -10,10 +10,22 @@
 """
 from collections import defaultdict
 
-import subprocess, json, tempfile, os
+import subprocess, json, tempfile, os, platform
 
 from ..benchmarks import IBenchmarks
 from ..utils import do_average
+
+
+def check_os():
+  """
+  This function checks the operating system and prints a message accordingly.
+  """
+  if platform.system() == 'FreeBSD':
+    return 
+  elif os.path.exists('/etc/os-release'):
+    print("This is likely a Linux system.")
+  else:
+    print("Could not determine the operating system.")
 
 class MBench(IBenchmarks):
     NAME_EXECUTABLE_LAT  = f'{os.path.dirname(os.path.abspath(__file__))}/mlatency'
@@ -59,6 +71,7 @@ class MBench(IBenchmarks):
     def __perform_memoryusage(self, libso_path: str, config_path: str):
         process = subprocess.Popen([MBench.NAME_EXECUTABLE_MEM, libso_path, config_path, MBench.RESULT_FILE_NAME])
         exit_code = process.wait()
+        print('Memory:', ' '.join([MBench.NAME_EXECUTABLE_MEM, libso_path, config_path, MBench.RESULT_FILE_NAME]))
         if exit_code != 0: raise Exception(f'MBench filed during execution, exit-code: {exit_code}')
         return self.__parse_results_memory(open(f'{MBench.RESULT_FILE_NAME}_memory.out', 'r').readlines())
     
@@ -136,12 +149,32 @@ class MBench(IBenchmarks):
                 data[keyword] = value
         return data
 
+    def __parse_pmcstat(self, output: str):
+        data = {}
+        lines = output.split('\n')
+        indexes = [x[2:] for x in lines[0].split(' ')[1:-1] if x != '']
+        values  = [x for x in lines[1].split(' ') if x != '']
+        for valZip in zip(indexes, values):
+            index, value = valZip
+            data[index] = int(value)
+        return data
+
     def __perform_perf(self, libso_path: str, config_path: str) -> dict:
-        process = subprocess.run(['perf', 'stat', '-a', '-e', 'instructions,branches,branch-misses,cache-misses,cache-references',
-                                  '-o', MBench_1.RESULT_FILE_NAME, MBench_1.NAME_EXECUTABLE_LAT, libso_path, config_path,
-                                  MBench_1.NULL_PATH], stdout=subprocess.PIPE)
-        result = self.__parse_perf(open(MBench_1.RESULT_FILE_NAME).read())
-        if process.returncode != 0: raise Exception(f'MBench_1 filed during execution, exit-code: {process.returncode}')
+        if platform.system() == 'FreeBSD':
+            # pmcstat -a -o MBench.RESULT_FILE_NAME -e instructions -e branches -e branch-misses -e cache-misses -e cache-references MBench.NAME_EXECUTABLE_LAT libso_path config_path MBench.NULL_PATH
+
+            process = subprocess.run(['pmcstat', '-p', 'll_cache_rd', '-p', 'll_cache_miss_rd', '-p', 'l1d_cache_rd', '-p', 'l1d_cache_wr',
+                                         '-p', 'l1d_cache_inval', '-p', 'br_pred', '-p', 'br_mis_pred', '-o', MBench.RESULT_FILE_NAME,
+                                        MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.NULL_PATH], stdout=subprocess.PIPE)
+            result = self.__parse_pmcstat(open(MBench.RESULT_FILE_NAME).read())
+        else:
+            process = subprocess.run(['perf', 'stat', '-a', '-e', 'instructions,branches,branch-misses,cache-misses,cache-references',
+                                        '-o', MBench.RESULT_FILE_NAME, MBench.NAME_EXECUTABLE_LAT, libso_path, config_path,
+                                        MBench.NULL_PATH], stdout=subprocess.PIPE)
+            result = self.__parse_perf(open(MBench.RESULT_FILE_NAME).read())
+        print(' '.join(['pmstat', '-e', "LLC-load-misses", '-e', "LLC-store-misses", '-o', 'MBench.RESULT_FILE_NAME',
+                                        MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.NULL_PATH]))
+        if process.returncode != 0: raise Exception(f'MBench filed during execution, exit-code: {process.returncode}')
         return result
 
     def perform_perf(self, libso_path: str, output_path: str):
@@ -156,9 +189,10 @@ class MBench(IBenchmarks):
         })
         json.dump(config, temp)
         temp.flush()
-        
-        utrace = self.__perform_utrace(libso_path=libso_path, config_path=temp.name)
-        json.dump(utrace, open(f'{output_path}/utrace.out', 'w'))
+
+        # not supported on FreeBSD
+        # utrace = self.__perform_utrace(libso_path=libso_path, config_path=temp.name)
+        # json.dump(utrace, open(f'{output_path}/utrace.out', 'w'))
 
         tperf = {}
         for threadnum in self.__config['threadnum']:

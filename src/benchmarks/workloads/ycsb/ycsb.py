@@ -19,6 +19,7 @@ class YCSB(object):
         process_args = [YCSB.NAME_EXECUTABLE, '-P', f'{config_path}', '-run']
         if self.__config['phase_load']: process_args += ['-load']
         
+        print(' '.join(process_args))
         process = subprocess.Popen(process_args, stdout=subprocess.PIPE)
         exit_code = process.wait()
         if exit_code != 0: raise Exception(f'YCSB filed during execution, exit-code: {exit_code} for workload {workload}')
