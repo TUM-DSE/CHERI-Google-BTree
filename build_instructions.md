@@ -41,22 +41,17 @@ Test CLHT:
 
 ### oneTBB 
 
-Choosing the build type - release/debug. For the hashtable, only `tbb` must be built from the entire project.
+Choosing the build type - release. For the hashtable, only `tbb` must be built from the entire project.
 ```
-  cmake -DCMAKE_BUILD_TYPE=Release .
-  or
-  cmake -DCMAKE_BUILD_TYPE=Debug .
-  make tbb
+  cmake .
+  make tbb  # TBB structures
 ```
 
-Source the path to be used during evaluation.
+Source the path to be used during evaluation. The TBB project provides the vars after building the component.
 ```
- # for release
- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/cristian/cheridb/structures/oneTBB/clang_14.0_cxx11_64_release
- # for debug
- export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/cristian/cheridb/structures/oneTBB/clang_14.0_cxx11_64_relwithdebinfo
+  source <resulting_path>/vars.sh
 ```
 
-Copy the resulted `.so` to `./lib`.
+!!!! TBB is a total nightmare. If something is not working, just shut down the SSH and re-establish the connection (some values get cached, stored / sessions).
 
-
+For debugging, just use the classical approach - adding the flags `-g -O0`. Do not build it in "DEBUG TYPE" (if you do, you will experience the worst nightmare in GDB.
