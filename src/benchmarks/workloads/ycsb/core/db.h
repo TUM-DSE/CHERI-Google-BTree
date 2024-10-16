@@ -111,7 +111,7 @@ class DB {
   void*       generic_structure = nullptr;
   std::string libpath;
 
-  void*       (*ds_init)();
+  void*       (*ds_init)(uint64_t);
   int         (*ds_insert)(void*, uint64_t, uint64_t);
   int         (*ds_update)(void*, uint64_t, uint64_t);
   int         (*ds_remove)(void*, uint64_t);
@@ -131,7 +131,7 @@ class DB {
     }
 
     /* load the functions */
-    this->ds_init   = (void* (*)())dlsym(this->libhandle,  "ds_init");
+    this->ds_init   = (void* (*)(uint64_t))dlsym(this->libhandle,  "ds_init");
     if (this->ds_init == nullptr) {
       std::cerr << "unable to load the function ds_init from the library " << this->libpath << std::endl;
       return 1;
@@ -167,7 +167,7 @@ class DB {
     }
 
     /* initialize the datastructure */
-    this->generic_structure = this->ds_init();
+    this->generic_structure = this->ds_init(0);
     return 0;
   }
   
