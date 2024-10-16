@@ -61,7 +61,7 @@ extern "C" {
 
     uint32_t read_CNTFRQ(void) {
         uint32_t freq;
-        asm volatile ("mrs %0, CNTFRQ_EL0" : "=r" (freq));
+        asm volatile ("mrs %0, cntpct_el0" : "=r" (cntpct));
         return freq;
     }
 
