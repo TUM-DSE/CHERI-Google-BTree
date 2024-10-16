@@ -2,8 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 
 cmake_minimum_required(VERSION 3.10)
+
+
 project(ycsb-cpp LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
+
+set(CMAKE_CXX_FLAGS "-pthread -march=morello")
 
 set(CMAKE_BUILD_TYPE Release)
 set(CompilerFlags
@@ -26,7 +30,7 @@ option(BIND_LMDB "build with lmdb" OFF)
 option(BIND_LEVELDB "build with leveldb" OFF)
 option(BIND_WIREDTIGER "build with wiredtiger" OFF)
 
-option(WITH_ZLIB "linking YCSB with zlib; needed by HdrHISTOGRAM, DO NOT TURN OFF" ON)
+option(WITH_ZLIB "linking YCSB with zlib; needed by HdrHISTOGRAM, DO NOT TURN OFF" OFF)
 option(WITH_LZ4 "linking YCSB with lz4" OFF)
 option(WITH_SNAPPY "linking YCSB with snappy" OFF)
 option(WITH_ZSTD "linking YCSB with zstd" OFF)
