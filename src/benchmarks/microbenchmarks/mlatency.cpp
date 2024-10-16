@@ -61,13 +61,12 @@ extern "C" {
 
     uint32_t read_CNTFRQ(void) {
         uint32_t freq;
-        asm volatile ("mrs %0, cntpct_el0" : "=r" (cntpct));
         return freq;
     }
 
     uint64_t read_CNTPCT(void) {
         uint64_t count;
-        asm volatile ("mrs %0, CNTPCT_EL0" : "=r" (count));
+        asm volatile ("mrs %0, CNTVCT_EL0" : "=r" (count));
         return count;
     }
 #endif
@@ -112,10 +111,20 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
             key_num   = qkeys[qindex++];
         }
         const uint64_t key      = hash_fn(key_num);
+    #ifdef __aarch64__
+	uint64_t startCycle = read_CNTPCT();
+        _ds_read(ds, key);
+	uint64_t endCycle   = read_CNTPCT();
+    #else 
         MEASURE_TIME(_ds_read(ds, key),  duration);
-
+    #endif
         std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
-        latencies.push_back({order.count(), duration.count()});
+    
+    #ifdef __aarch64__
+	latencies.push_back({order.count(), startCycle-endCycle});
+    #else
+	latencies.push_back({order.count(), duration.count()});
+    #endif
     }
     logfilePerformance.add_log("dataset_performquery", latencies);
 }
@@ -199,6 +208,7 @@ void benchmark_threads(const uint64_t num_threads, const uint64_t threadid,
 }
 
 int main(int argc, char *argv[]) {
+    read_CNTPCT();
     if (argc != 4) {
         std::cerr << "[error] format: <path to so> <path to config file> <log file name>" << std::endl;
         exit(1);
