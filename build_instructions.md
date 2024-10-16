@@ -52,7 +52,7 @@ Source the path to be used during evaluation. The TBB project provides the vars 
   source <resulting_path>/vars.sh
 ```
 
-To make it run on `no capabilities` mode, you should move the .so files to `/usr/lib64` (yes, I know that I promised not to change the root files again. I lied :-( ).
+[VERY IMPORTANT] To make it run on `no capabilities` mode, you should move the .so files to `/usr/lib64` (yes, I know that I promised not to change the root files again. I lied :-( ).
 
 !!!! TBB is a total nightmare. If something is not working, just shut down the SSH and re-establish the connection (some values get cached, stored / sessions).
 
