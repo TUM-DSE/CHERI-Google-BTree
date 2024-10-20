@@ -75,9 +75,11 @@ extern "C" {
 
 void dataset_performfill(const size_t num_threads, const size_t thread_id, 
                          void* ds, const uint64_t capacity) {
-#ifndef __aarch64__
+#ifdef __aarch64__
+    uint64_t startCycle, endCycle;
+#else
     std::chrono::nanoseconds duration;
-    std::vector<std::pair<uint64_t, uint64_t>> latencies(capacity);
+    std::vector<std::pair<uint64_t, uint64_t>> latencies;
 #endif
 
     for (uint64_t i=0; i<capacity; i++) {
@@ -86,9 +88,9 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
         const uint64_t value    = hash_fn(key_num * key_num);   /* insert a random key */
 
     #ifdef __aarch64__
-        uint64_t startCycle = read_CNTPCT();
+        startCycle = read_CNTPCT();
         _ds_insert(ds, key, value);
-        uint64_t endCycle   = read_CNTPCT();
+        endCycle   = read_CNTPCT();
     #else
         MEASURE_TIME(_ds_insert(ds, key, value), duration);
     #endif
@@ -100,16 +102,16 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
         latencies.push_back({order.count(), duration.count()});
     #endif
     }
-#ifndef __aarch64__
     logfilePerformance.add_log("dataset_performfill", latencies);
-#endif
 }
 
 void dataset_performquery(const size_t num_threads, const size_t thread_id, void* ds,
                          const double success_factor, const uint64_t thread_capacity, const double query_factor,
                          std::vector<uint64_t> qkeys) {
     uint64_t qindex = 0;
-#ifndef __aarch64__
+#ifdef __aarch64__
+    uint64_t startCycle, endCycle;
+#else
     std::chrono::nanoseconds duration;
     std::vector<std::pair<uint64_t, uint64_t>> latencies;
 #endif
@@ -120,9 +122,9 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
         }
         const uint64_t key      = hash_fn(key_num);
     #ifdef __aarch64__
-	    uint64_t startCycle = read_CNTPCT();
+	    startCycle = read_CNTPCT();
         _ds_read(ds, key);
-	    uint64_t endCycle   = read_CNTPCT();
+	    endCycle   = read_CNTPCT();
     #else 
         MEASURE_TIME(_ds_read(ds, key),  duration);
     #endif
@@ -134,9 +136,7 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
 	    latencies.push_back({order.count(), duration.count()});
     #endif
     }
-#ifndef __aarch64__
     logfilePerformance.add_log("dataset_performquery", latencies);
-#endif
 }
 
 void dataset_performdeletion(const size_t num_threads, const size_t thread_id, void* ds,
