@@ -177,9 +177,9 @@ void benchmark_threads(const uint64_t num_threads, const uint64_t threadid,
     const uint64_t thread_capacity = capacity/num_threads;
     const double filling_factor = config_data["performfill"]["filling_factor"];
 
-    tbarrier.wait();
-    dataset_performfill(num_threads, threadid, ds, static_cast<uint64_t>(thread_capacity * filling_factor));
-    tbarrier.wait();
+    // tbarrier.wait();
+    // dataset_performfill(num_threads, threadid, ds, static_cast<uint64_t>(thread_capacity * filling_factor));
+    // tbarrier.wait();
 
 
     /* query mechanism */

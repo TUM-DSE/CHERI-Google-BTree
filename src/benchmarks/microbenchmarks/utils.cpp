@@ -63,7 +63,6 @@ LogFile::LogFile(std::string log_name) {
 
 void LogFile::add_log(std::string function_name,
         std::vector<std::pair<uint64_t, uint64_t>> &durations) {
-  return;
   g_mutex.lock();
   for (size_t i=0; i<durations.size(); i++) {
     std::ostringstream log_entry;
