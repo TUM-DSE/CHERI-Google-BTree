@@ -56,14 +56,6 @@ extern "C" {
 }
 
 #ifdef __aarch64__
-    #define CNTFRQ_EL0 (*(volatile uint32_t*)0xE000E020)
-    #define CNTPCT_EL0 (*(volatile uint64_t*)0xE000E028)
-
-    uint32_t read_CNTFRQ(void) {
-        uint32_t freq;
-        return freq;
-    }
-
     static inline uint64_t read_CNTPCT(void) {
         uint64_t count;
         asm volatile ("mrs %0, CNTVCT_EL0" : "=r" (count));
