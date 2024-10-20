@@ -107,36 +107,36 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
 void dataset_performquery(const size_t num_threads, const size_t thread_id, void* ds,
                          const double success_factor, const uint64_t thread_capacity, const double query_factor,
                          std::vector<uint64_t> &qkeys) {
-    uint64_t qindex = 0;
-#ifdef __aarch64__
-    uint64_t startCycle, endCycle;
-    std::vector<std::pair<uint64_t, uint64_t>> latencies;
-#else
-    std::chrono::nanoseconds duration;
-    std::vector<std::pair<uint64_t, uint64_t>> latencies;
-#endif
-    for (uint64_t i=0; i<thread_capacity * query_factor; i++) {
-        uint64_t key_num = (thread_capacity + i + 1) * num_threads + thread_id;    /* take a value outside of the generated keys */
-        if (success_factor > 0 && i % static_cast<uint64_t>(thread_capacity / success_factor) == 0) {
-            key_num   = qkeys[qindex++];
-        }
-        const uint64_t key      = hash_fn(key_num);
-    #ifdef __aarch64__
-	    startCycle = read_CNTPCT();
-        _ds_read(ds, key);
-	    endCycle   = read_CNTPCT();
-    #else 
-        MEASURE_TIME(_ds_read(ds, key),  duration);
-    #endif
-        std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
+//     uint64_t qindex = 0;
+// #ifdef __aarch64__
+//     uint64_t startCycle, endCycle;
+//     std::vector<std::pair<uint64_t, uint64_t>> latencies;
+// #else
+//     std::chrono::nanoseconds duration;
+//     std::vector<std::pair<uint64_t, uint64_t>> latencies;
+// #endif
+//     for (uint64_t i=0; i<thread_capacity * query_factor; i++) {
+//         uint64_t key_num = (thread_capacity + i + 1) * num_threads + thread_id;    /* take a value outside of the generated keys */
+//         if (success_factor > 0 && i % static_cast<uint64_t>(thread_capacity / success_factor) == 0) {
+//             key_num   = qkeys[qindex++];
+//         }
+//         const uint64_t key      = hash_fn(key_num);
+//     #ifdef __aarch64__
+// 	    startCycle = read_CNTPCT();
+//         _ds_read(ds, key);
+// 	    endCycle   = read_CNTPCT();
+//     #else 
+//         MEASURE_TIME(_ds_read(ds, key),  duration);
+//     #endif
+//         std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     
-    #ifdef __aarch64__
-	    latencies.push_back({order.count(), endCycle - startCycle});
-    #else
-	    latencies.push_back({order.count(), duration.count()});
-    #endif
-    }
-    logfilePerformance.add_log("dataset_performquery", latencies);
+//     #ifdef __aarch64__
+// 	    latencies.push_back({order.count(), endCycle - startCycle});
+//     #else
+// 	    latencies.push_back({order.count(), duration.count()});
+//     #endif
+//     }
+//     logfilePerformance.add_log("dataset_performquery", latencies);
 }
 
 void dataset_performdeletion(const size_t num_threads, const size_t thread_id, void* ds,
@@ -193,12 +193,12 @@ void benchmark_threads(const uint64_t num_threads, const uint64_t threadid,
         qkey.push_back(rand() % capacity);
     }
     g_mutex.unlock();
-    return;
 
     tbarrier.wait();
     dataset_performquery(num_threads, threadid, ds,
                         success_factor, thread_capacity, query_factor, qkey);
     tbarrier.wait();
+    return;
 
 
     /* deletion mechanism */
