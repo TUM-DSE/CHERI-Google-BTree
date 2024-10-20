@@ -69,8 +69,10 @@ class MBench(IBenchmarks):
         """
         if self.__config['format'] == 'timer':
             process = subprocess.Popen([MBench.NAME_EXECUTABLE_LAT_TIMER, libso_path, config_path, MBench.RESULT_FILE_NAME], stdout=subprocess.PIPE)
+            print(' '.join([MBench.NAME_EXECUTABLE_LAT_TIMER, libso_path, config_path, MBench.RESULT_FILE_NAME]))
         elif self.__config['format'] == 'register':
             process = subprocess.Popen([MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.RESULT_FILE_NAME], stdout=subprocess.PIPE)
+            print(' '.join([MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.RESULT_FILE_NAME]))
 
         stdout, _ = process.communicate()
         data = stdout.decode()
@@ -82,6 +84,7 @@ class MBench(IBenchmarks):
 
     def __perform_memoryusage(self, libso_path: str, config_path: str):
         process = subprocess.Popen([MBench.NAME_EXECUTABLE_MEM, libso_path, config_path, MBench.RESULT_FILE_NAME])
+        print(' '.join([MBench.NAME_EXECUTABLE_MEM, libso_path, config_path, MBench.RESULT_FILE_NAME]))
         exit_code = process.wait()
         if exit_code != 0: raise Exception(f'MBench filed during execution, exit-code: {exit_code}')
         return self.__parse_results_memory()
