@@ -56,7 +56,7 @@ extern "C" {
 }
 
 #ifdef __aarch64__
-    uint64_t read_CNTPCT(void) {
+    volatile uint64_t read_CNTPCT(void) {
         uint64_t count;
         asm ("mrs %0, CNTVCT_EL0" : "=r" (count));
         return count;
