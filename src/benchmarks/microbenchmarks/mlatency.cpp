@@ -73,12 +73,11 @@ extern "C" {
 
 void dataset_performfill(const size_t num_threads, const size_t thread_id, 
                          void* ds, const uint64_t capacity) {
+    std::vector<std::pair<uint64_t, uint64_t>> latencies(capacity);
 #ifdef __aarch64__
     uint64_t startCycle, endCycle;
-    std::vector<std::pair<uint64_t, uint64_t>> latencies;
 #else
     std::chrono::nanoseconds duration;
-    std::vector<std::pair<uint64_t, uint64_t>> latencies;
 #endif
 
     for (uint64_t i=0; i<capacity; i++) {
@@ -218,7 +217,6 @@ void benchmark_threads(const uint64_t num_threads, const uint64_t threadid,
 }
 
 int main(int argc, char *argv[]) {
-    read_CNTPCT();
     if (argc != 4) {
         std::cerr << "[error] format: <path to so> <path to config file> <log file name>" << std::endl;
         exit(1);
