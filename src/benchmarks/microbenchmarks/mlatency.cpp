@@ -75,6 +75,7 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
                          void* ds, const uint64_t capacity) {
 #ifdef __aarch64__
     uint64_t startCycle, endCycle;
+    std::vector<std::pair<uint64_t, uint64_t>> latencies;
 #else
     std::chrono::nanoseconds duration;
     std::vector<std::pair<uint64_t, uint64_t>> latencies;
@@ -109,6 +110,7 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
     uint64_t qindex = 0;
 #ifdef __aarch64__
     uint64_t startCycle, endCycle;
+    std::vector<std::pair<uint64_t, uint64_t>> latencies;
 #else
     std::chrono::nanoseconds duration;
     std::vector<std::pair<uint64_t, uint64_t>> latencies;
