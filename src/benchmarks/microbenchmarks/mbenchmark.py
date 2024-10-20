@@ -56,6 +56,7 @@ class MBench(IBenchmarks):
         for data in zip(initial, final):
             initial_data = data[0].split(': ')
             final_data   = data[1].split(': ')
+            print(initial_data, final_data)
             rValue[initial_data[0]] = int(final_data[1].replace('\n', '')) - int(initial_data[1].replace('\n', ''))
 
         return rValue 
