@@ -194,13 +194,12 @@ void benchmark_threads(const uint64_t num_threads, const uint64_t threadid,
     }
     g_mutex.unlock();
 
-    return;
-
     tbarrier.wait();
     dataset_performquery(num_threads, threadid, ds,
                         success_factor, thread_capacity, query_factor, qkey);
     tbarrier.wait();
 
+    return;
 
     /* deletion mechanism */
     const double deletion_factor = config_data["performdeletion"]["deletion_factor"];
