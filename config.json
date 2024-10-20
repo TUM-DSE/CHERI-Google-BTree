@@ -19,6 +19,7 @@
 
             "__comment": "the threadnum should be a list [] - usecases",
             "threadnum": [1, 2, 4],
+            
             "capacity": 131072,
             "repetitions": 5,
             "perf": {

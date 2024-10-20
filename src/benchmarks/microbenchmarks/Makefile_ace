@@ -12,8 +12,9 @@ INCLUDES := -Ijsonutility/include
 ALL = 	mlatency mmemory
 all: $(ALL)
 
-mlatency: utils.cpp mlatency.cpp
+mlatency: utils.cpp mlatency.cpp mlatency_timer.cpp
 	$(GCC) $(CFLAGS) $(INCLUDES) utils.cpp mlatency.cpp -o mlatency
+	$(GCC) $(CFLAGS) $(INCLUDES) utils.cpp mlatency_timer.cpp -o mlatency_timer
 
 mmemory: utils.cpp mmemory.cpp
 	$(GCC) $(CFLAGS) $(INCLUDES) utils.cpp mmemory.cpp -o mmemory

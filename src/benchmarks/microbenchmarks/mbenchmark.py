@@ -29,6 +29,7 @@ def check_os():
 
 class MBench(IBenchmarks):
     NAME_EXECUTABLE_LAT  = f'{os.path.dirname(os.path.abspath(__file__))}/mlatency'
+    NAME_EXECUTABLE_LAT_TIMER  = f'{os.path.dirname(os.path.abspath(__file__))}/mlatency_timer'
     NAME_EXECUTABLE_MEM  = f'{os.path.dirname(os.path.abspath(__file__))}/mmemory'
     RESULT_FILE_NAME = 'generic_output'
     NULL_PATH        = '/dev/null'
@@ -63,8 +64,14 @@ class MBench(IBenchmarks):
         return rValue 
 
     def __perform_bechmark(self, libso_path: str, config_path: str):
-        process = subprocess.Popen([MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.RESULT_FILE_NAME], stdout=subprocess.PIPE)
-        print(' '.join([MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.RESULT_FILE_NAME]))
+        """
+            Perform the benchmark. Choose between register / timer method.
+        """
+        if self.__config['format'] == 'timer':
+            process = subprocess.Popen([MBench.NAME_EXECUTABLE_LAT_TIMER, libso_path, config_path, MBench.RESULT_FILE_NAME], stdout=subprocess.PIPE)
+        elif self.__config['format'] == 'register':
+            process = subprocess.Popen([MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.RESULT_FILE_NAME], stdout=subprocess.PIPE)
+
         stdout, _ = process.communicate()
         data = stdout.decode()
         if data: print(data)    # debugging functionality
