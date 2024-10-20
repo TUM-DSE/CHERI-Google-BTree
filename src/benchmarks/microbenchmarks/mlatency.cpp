@@ -135,9 +135,9 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
     #else
 	    latencies.push_back({order.count(), duration.count()});
     #endif
-        return;
     }
     logfilePerformance.add_log("dataset_performquery", latencies);
+    return;
 }
 
 void dataset_performdeletion(const size_t num_threads, const size_t thread_id, void* ds,
