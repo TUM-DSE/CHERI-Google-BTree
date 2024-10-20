@@ -52,7 +52,7 @@ uint64_t initialize(std::string libpath);
 class LogFile {
 public:
     LogFile(std::string log_name);
-    void add_log(std::string, &std::vector<std::pair<uint64_t, uint64_t>>);
+    void add_log(std::string, std::vector<std::pair<uint64_t, uint64_t>> &);
     void save_logfile();
     void set_name(std::string log_name) { this->log_name = log_name; }
 private:
