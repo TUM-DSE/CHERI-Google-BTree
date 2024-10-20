@@ -120,13 +120,13 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
             key_num   = qkeys[qindex++];
         }
         const uint64_t key      = hash_fn(key_num);
-    // #ifdef __aarch64__
-	//     startCycle = read_CNTPCT();
-    //     _ds_read(ds, key);
-	//     endCycle   = read_CNTPCT();
-    // #else 
-    //     MEASURE_TIME(_ds_read(ds, key),  duration);
-    // #endif
+    #ifdef __aarch64__
+	    startCycle = read_CNTPCT();
+        _ds_read(ds, key);
+	    endCycle   = read_CNTPCT();
+    #else 
+        MEASURE_TIME(_ds_read(ds, key),  duration);
+    #endif
     //     std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     
     // #ifdef __aarch64__
