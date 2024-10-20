@@ -72,20 +72,20 @@ void getCurrentProcessInfo(char *filename) {
         return;
     }
 
-    file = fopen(filename, "w");
-    if (file == NULL) {
+    FILE* fout = fopen(filename, "w");
+    if (fout == NULL) {
         perror("fopen");
-        return;
+        exit(1);
     }
 
     // Write process information to the file
-    fprintf(file, "Process ID: %d\n", proc.ki_pid);
-    fprintf(file, "Process Name: %s\n", proc.ki_comm);
-    fprintf(file, "Virtual Memory Size: %lu KB\n", proc.ki_size / 1024);
-    fprintf(file, "Resident Set Size: %lu KB\n", proc.ki_rssize * getpagesize() / 1024);
+    fprintf(fout, "Process ID: %d\n", proc.ki_pid);
+    fprintf(fout, "Process Name: %s\n", proc.ki_comm);
+    fprintf(fout, "Virtual Memory Size: %lu KB\n", proc.ki_size / 1024);
+    fprintf(fout, "Resident Set Size: %lu KB\n", proc.ki_rssize * getpagesize() / 1024);
 
     // Close the file
-    fclose(file);
+    fclose(fout);
 }
 
 
