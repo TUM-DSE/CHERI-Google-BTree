@@ -106,7 +106,7 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
 
 void dataset_performquery(const size_t num_threads, const size_t thread_id, void* ds,
                          const double success_factor, const uint64_t thread_capacity, const double query_factor,
-                         std::vector<uint64_t> qkeys) {
+                         std::vector<uint64_t> &qkeys) {
     uint64_t qindex = 0;
 #ifdef __aarch64__
     uint64_t startCycle, endCycle;
