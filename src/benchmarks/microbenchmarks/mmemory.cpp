@@ -19,6 +19,7 @@
 #include <thread>
 #include <atomic>
 #include <random>
+#include <unistd.h>
 
 #include <sys/sysctl.h>
 #include <sys/types.h>
@@ -132,8 +133,8 @@ int main(int argc, char *argv[]) {
     const double filling_factor = config_data["performfill"]["filling_factor"];
 
     void* ds = ds_init(capacity);
-    getCurrentProcessInfo('initial.txt');
+    getCurrentProcessInfo("initial_memory.txt");
     dataset_performfill(ds, filling_factor, capacity);
-    getCurrentProcessInfo('final.txt');
+    getCurrentProcessInfo("final_memory.txt");
     return 0;
 }
