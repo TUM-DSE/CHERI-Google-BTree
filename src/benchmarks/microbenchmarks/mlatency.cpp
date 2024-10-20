@@ -73,35 +73,35 @@ extern "C" {
 
 void dataset_performfill(const size_t num_threads, const size_t thread_id, 
                          void* ds, const uint64_t capacity) {
-#ifdef __aarch64__
-    uint64_t startCycle, endCycle;
-    std::vector<std::pair<uint64_t, uint64_t>> latencies;
-#else
-    std::chrono::nanoseconds duration;
-    std::vector<std::pair<uint64_t, uint64_t>> latencies;
-#endif
+// #ifdef __aarch64__
+//     uint64_t startCycle, endCycle;
+//     std::vector<std::pair<uint64_t, uint64_t>> latencies;
+// #else
+//     std::chrono::nanoseconds duration;
+//     std::vector<std::pair<uint64_t, uint64_t>> latencies;
+// #endif
 
-    for (uint64_t i=0; i<capacity; i++) {
-        const uint64_t key_num  = i * num_threads + thread_id;
-        const uint64_t key      = hash_fn(key_num);
-        const uint64_t value    = hash_fn(key_num * key_num);   /* insert a random key */
+//     for (uint64_t i=0; i<capacity; i++) {
+//         const uint64_t key_num  = i * num_threads + thread_id;
+//         const uint64_t key      = hash_fn(key_num);
+//         const uint64_t value    = hash_fn(key_num * key_num);   /* insert a random key */
 
-    #ifdef __aarch64__
-        // startCycle = read_CNTPCT();
-        // _ds_insert(ds, key, value);
-        // endCycle   = read_CNTPCT();
-    #else
-        // MEASURE_TIME(_ds_insert(ds, key, value), duration);
-    #endif
-        
-        // std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
-    #ifdef __aarch64__
-        // latencies.push_back({order.count(), endCycle - startCycle});
-    #else
-        // latencies.push_back({order.count(), duration.count()});
-    #endif
-    }
-    // logfilePerformance.add_log("dataset_performfill", latencies);
+//     #ifdef __aarch64__
+//         startCycle = read_CNTPCT();
+//         _ds_insert(ds, key, value);
+//         endCycle   = read_CNTPCT();
+//     #else
+//         MEASURE_TIME(_ds_insert(ds, key, value), duration);
+//     #endif
+
+//         std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
+//     #ifdef __aarch64__
+//         latencies.push_back({order.count(), endCycle - startCycle});
+//     #else
+//         latencies.push_back({order.count(), duration.count()});
+//     #endif
+//     }
+//     logfilePerformance.add_log("dataset_performfill", latencies);
 }
 
 void dataset_performquery(const size_t num_threads, const size_t thread_id, void* ds,
