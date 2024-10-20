@@ -101,7 +101,7 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
         latencies.push_back({order.count(), duration.count()});
     #endif
     }
-    logfilePerformance.add_log("dataset_performfill", latencies);
+    // logfilePerformance.add_log("dataset_performfill", latencies);
 }
 
 void dataset_performquery(const size_t num_threads, const size_t thread_id, void* ds,
