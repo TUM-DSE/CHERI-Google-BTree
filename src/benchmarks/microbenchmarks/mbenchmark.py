@@ -176,10 +176,13 @@ class MBench(IBenchmarks):
     def __perform_perf(self, libso_path: str, config_path: str) -> dict:
         if platform.system() == 'FreeBSD':
             # pmcstat -a -o MBench.RESULT_FILE_NAME -e instructions -e branches -e branch-misses -e cache-misses -e cache-references MBench.NAME_EXECUTABLE_LAT libso_path config_path MBench.NULL_PATH
+            exectuable = MBench.NAME_EXECUTABLE_LAT
+            if self.__config['format'] == 'timer':
+                exectuable = MBench.NAME_EXECUTABLE_LAT_TIMER
 
             process = subprocess.run(['pmcstat', '-p', 'll_cache_rd', '-p', 'll_cache_miss_rd', '-p', 'l1d_cache_rd', '-p', 'l1d_cache_wr',
                                          '-p', 'l1d_cache_inval', '-p', 'br_pred', '-p', 'br_mis_pred', '-o', MBench.RESULT_FILE_NAME,
-                                        MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.NULL_PATH], stdout=subprocess.PIPE)
+                                        exectuable, libso_path, config_path, MBench.NULL_PATH], stdout=subprocess.PIPE)
             result = self.__parse_pmcstat(open(MBench.RESULT_FILE_NAME).read())
         else:
             process = subprocess.run(['perf', 'stat', '-a', '-e', 'instructions,branches,branch-misses,cache-misses,cache-references',
@@ -187,7 +190,7 @@ class MBench(IBenchmarks):
                                         MBench.NULL_PATH], stdout=subprocess.PIPE)
             result = self.__parse_perf(open(MBench.RESULT_FILE_NAME).read())
         print(' '.join(['pmstat', '-e', "LLC-load-misses", '-e', "LLC-store-misses", '-o', 'MBench.RESULT_FILE_NAME',
-                                        MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.NULL_PATH]))
+                                        exectuable, libso_path, config_path, MBench.NULL_PATH]))
         if process.returncode != 0: raise Exception(f'MBench filed during execution, exit-code: {process.returncode}')
         return result
 
