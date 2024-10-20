@@ -91,14 +91,14 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
         // _ds_insert(ds, key, value);
         // endCycle   = read_CNTPCT();
     #else
-        MEASURE_TIME(_ds_insert(ds, key, value), duration);
+        // MEASURE_TIME(_ds_insert(ds, key, value), duration);
     #endif
         
         // std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     #ifdef __aarch64__
         // latencies.push_back({order.count(), endCycle - startCycle});
     #else
-        latencies.push_back({order.count(), duration.count()});
+        // latencies.push_back({order.count(), duration.count()});
     #endif
     }
     // logfilePerformance.add_log("dataset_performfill", latencies);
