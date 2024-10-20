@@ -45,10 +45,8 @@ Barrier               tbarrier;
 /* ordering parameter */
 std::chrono::time_point<std::chrono::high_resolution_clock> gstart_time;
 
-#ifndef __aarch64__
 /* data extracted from the program */
 LogFile logfilePerformance("");
-#endif
 
 /* workaround for perforator */
 extern "C" {
