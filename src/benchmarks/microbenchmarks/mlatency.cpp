@@ -126,13 +126,13 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
     #else 
         MEASURE_TIME(_ds_read(ds, key),  duration);
     #endif
-    //     std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
+        std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     
-    // #ifdef __aarch64__
-	//     latencies.push_back({order.count(), endCycle - startCycle});
-    // #else
-	//     latencies.push_back({order.count(), duration.count()});
-    // #endif
+    #ifdef __aarch64__
+	    latencies.push_back({order.count(), endCycle - startCycle});
+    #else
+	    latencies.push_back({order.count(), duration.count()});
+    #endif
     }
     logfilePerformance.add_log("dataset_performquery", latencies);
 }
