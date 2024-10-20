@@ -64,7 +64,7 @@ extern "C" {
         return freq;
     }
 
-    uint64_t read_CNTPCT(void) {
+    static inline uint64_t read_CNTPCT(void) {
         uint64_t count;
         asm volatile ("mrs %0, CNTVCT_EL0" : "=r" (count));
         return count;
@@ -194,10 +194,10 @@ void benchmark_threads(const uint64_t num_threads, const uint64_t threadid,
     }
     g_mutex.unlock();
 
-    // tbarrier.wait();
-    // dataset_performquery(num_threads, threadid, ds,
-    //                     success_factor, thread_capacity, query_factor, qkey);
-    // tbarrier.wait();
+    tbarrier.wait();
+    dataset_performquery(num_threads, threadid, ds,
+                        success_factor, thread_capacity, query_factor, qkey);
+    tbarrier.wait();
 
     return;
 
