@@ -119,7 +119,7 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
         if (success_factor > 0 && i % static_cast<uint64_t>(thread_capacity / success_factor) == 0) {
             key_num   = qkeys[qindex++];
         }
-        const uint64_t key      = hash_fn(key_num);
+        const uint64_t key      = hash_fn(key_num) % 60;
     #ifdef __aarch64__
 	    // startCycle = read_CNTPCT();
         _ds_read(ds, key);
