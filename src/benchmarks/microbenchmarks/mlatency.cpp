@@ -96,12 +96,12 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
 
         std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     #ifdef __aarch64__
-        latencies.push_back({order.count(), endCycle - startCycle});
+        // latencies.push_back({order.count(), endCycle - startCycle});
     #else
         latencies.push_back({order.count(), duration.count()});
     #endif
     }
-    // logfilePerformance.add_log("dataset_performfill", latencies);
+    logfilePerformance.add_log("dataset_performfill", latencies);
 }
 
 void dataset_performquery(const size_t num_threads, const size_t thread_id, void* ds,
