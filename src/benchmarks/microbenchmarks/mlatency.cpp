@@ -65,9 +65,9 @@ extern "C" {
     }
 
     static inline uint64_t read_CNTPCT(void) {
-        uint64_t count;
-        asm volatile ("mrs %0, CNTVCT_EL0" : "=r" (count));
-        return count;
+        // uint64_t count;
+        // asm volatile ("mrs %0, CNTVCT_EL0" : "=r" (count));
+        // return count;
     }
 #endif
 
@@ -87,9 +87,9 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
         const uint64_t value    = hash_fn(key_num * key_num);   /* insert a random key */
 
     #ifdef __aarch64__
-        //startCycle = read_CNTPCT();
+        startCycle = read_CNTPCT();
         _ds_insert(ds, key, value);
-        //endCycle   = read_CNTPCT();
+        endCycle   = read_CNTPCT();
     #else
         MEASURE_TIME(_ds_insert(ds, key, value), duration);
     #endif
@@ -121,9 +121,9 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
         }
         const uint64_t key      = hash_fn(key_num);
     #ifdef __aarch64__
-	    // startCycle = read_CNTPCT();
+	    startCycle = read_CNTPCT();
         _ds_read(ds, key);
-	    // endCycle   = read_CNTPCT();
+	    endCycle   = read_CNTPCT();
     #else 
         MEASURE_TIME(_ds_read(ds, key),  duration);
     #endif
