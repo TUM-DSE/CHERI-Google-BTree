@@ -115,7 +115,6 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
     std::chrono::nanoseconds duration;
     std::vector<std::pair<uint64_t, uint64_t>> latencies;
 #endif
-    return;
     for (uint64_t i=0; i<thread_capacity * query_factor; i++) {
         uint64_t key_num = (thread_capacity + i + 1) * num_threads + thread_id;    /* take a value outside of the generated keys */
         if (success_factor > 0 && i % static_cast<uint64_t>(thread_capacity / success_factor) == 0) {
@@ -129,6 +128,7 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
     #else 
         MEASURE_TIME(_ds_read(ds, key),  duration);
     #endif
+        return;
         std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     
     #ifdef __aarch64__
