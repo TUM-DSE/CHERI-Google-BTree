@@ -65,9 +65,10 @@ extern "C" {
     }
 
     static inline uint64_t read_CNTPCT(void) {
-        // uint64_t count;
-        // asm volatile ("mrs %0, CNTVCT_EL0" : "=r" (count));
-        // return count;
+        return 0;
+        uint64_t count;
+        asm volatile ("mrs %0, CNTVCT_EL0" : "=r" (count));
+        return count;
     }
 #endif
 
