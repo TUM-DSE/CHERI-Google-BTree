@@ -48,12 +48,17 @@ class MBench(IBenchmarks):
             rdata[function] = [fdata[x] for x in sorted(fdata.keys())]
         return rdata
 
-    def __parse_results_memory(self, lines: list[str]) -> dict:
-        data = defaultdict(lambda: [])
-        for line in lines:
-            function_name, _, memory_usage = line.split(' ')
-            data[function_name].append(int(memory_usage))
-        return data 
+    def __parse_results_memory(self) -> dict:
+        initial = open('initial_memory.txt').readlines()
+        final   = open('final_memory.txt').readlines()
+
+        rValue = {}
+        for data in zip(initial, final):
+            initial_data = data[0].split(': ')
+            final_data   = data[1].split(': ')
+            rValue[initial_data[0]] = int(final_data[1].replace('\n', '')) - int(initial_data[1].replace('\n', ''))
+
+        return rValue 
 
     def __perform_bechmark(self, libso_path: str, config_path: str):
         process = subprocess.Popen([MBench.NAME_EXECUTABLE_LAT, libso_path, config_path, MBench.RESULT_FILE_NAME], stdout=subprocess.PIPE)
@@ -61,9 +66,7 @@ class MBench(IBenchmarks):
         stdout, _ = process.communicate()
         data = stdout.decode()
         if data: print(data)    # debugging functionality
-        import time
         if process.returncode != 0:
-            time.sleep(1000)
             raise Exception(f'MBench failed during execution, exit-code: {process.returncode}')
         
         return self.__parse_results_performance(open(f'{MBench.RESULT_FILE_NAME}_performance.out', 'r').readlines())
@@ -71,9 +74,8 @@ class MBench(IBenchmarks):
     def __perform_memoryusage(self, libso_path: str, config_path: str):
         process = subprocess.Popen([MBench.NAME_EXECUTABLE_MEM, libso_path, config_path, MBench.RESULT_FILE_NAME])
         exit_code = process.wait()
-        print('Memory:', ' '.join([MBench.NAME_EXECUTABLE_MEM, libso_path, config_path, MBench.RESULT_FILE_NAME]))
         if exit_code != 0: raise Exception(f'MBench filed during execution, exit-code: {exit_code}')
-        return self.__parse_results_memory(open(f'{MBench.RESULT_FILE_NAME}_memory.out', 'r').readlines())
+        return self.__parse_results_memory()
     
     def perform_benchmark(self, libso_path: str, output_path: str):
         os.makedirs(output_path, exist_ok=True)
