@@ -53,12 +53,13 @@ class MBench(IBenchmarks):
         final   = open('final_memory.txt').readlines()
 
         rValue = {}
+        transform = lambda x: x.replace('KB', '').replace('\n', '')
         for data in zip(initial, final):
             initial_data = data[0].split(': ')
             final_data   = data[1].split(': ')
             if initial_data[0].startswith('Process Name'): continue
-            rValue[initial_data[0]] = int(final_data[1].replace('\n', '')) - int(initial_data[1].replace('\n', ''))
-
+            rValue[initial_data[0]] = int(transform(final_data[1])) - int(transform(initial_data[1]))
+            rValue['_raw'] = f'{final_data[1]} - {initial_data[1]}'
         return rValue 
 
     def __perform_bechmark(self, libso_path: str, config_path: str):
