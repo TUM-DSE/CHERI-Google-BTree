@@ -107,14 +107,14 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
 void dataset_performquery(const size_t num_threads, const size_t thread_id, void* ds,
                          const double success_factor, const uint64_t thread_capacity, const double query_factor,
                          std::vector<uint64_t> &qkeys) {
-//     uint64_t qindex = 0;
-// #ifdef __aarch64__
-//     uint64_t startCycle, endCycle;
-//     std::vector<std::pair<uint64_t, uint64_t>> latencies;
-// #else
-//     std::chrono::nanoseconds duration;
-//     std::vector<std::pair<uint64_t, uint64_t>> latencies;
-// #endif
+    uint64_t qindex = 0;
+#ifdef __aarch64__
+    uint64_t startCycle, endCycle;
+    std::vector<std::pair<uint64_t, uint64_t>> latencies;
+#else
+    std::chrono::nanoseconds duration;
+    std::vector<std::pair<uint64_t, uint64_t>> latencies;
+#endif
 //     for (uint64_t i=0; i<thread_capacity * query_factor; i++) {
 //         uint64_t key_num = (thread_capacity + i + 1) * num_threads + thread_id;    /* take a value outside of the generated keys */
 //         if (success_factor > 0 && i % static_cast<uint64_t>(thread_capacity / success_factor) == 0) {
