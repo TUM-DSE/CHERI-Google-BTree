@@ -20,6 +20,10 @@
 #include <atomic>
 #include <random>
 
+#include <sys/sysctl.h>
+#include <sys/types.h>
+#include <sys/user.h>
+
 void*       libhandle = nullptr;
 void*       generic_structure = nullptr;
 
@@ -47,6 +51,43 @@ uint64_t next_value() {
     return std::atomic_fetch_add(&counter, 1ULL);
 }
 
+void getCurrentProcessInfo(char *filename) {
+    int mib[4];
+    struct kinfo_proc proc;
+    size_t len = sizeof(proc);
+
+    // Get the current process ID
+    pid_t pid = getpid();
+
+    // Set up the mib array to get the process information
+    mib[0] = CTL_KERN;
+    mib[1] = KERN_PROC;
+    mib[2] = KERN_PROC_PID;
+    mib[3] = pid;
+
+    // Get the process information
+    if (sysctl(mib, 4, &proc, &len, NULL, 0) == -1) {
+        perror("sysctl");
+        return;
+    }
+
+    file = fopen(filename, "w");
+    if (file == NULL) {
+        perror("fopen");
+        return;
+    }
+
+    // Write process information to the file
+    fprintf(file, "Process ID: %d\n", proc.ki_pid);
+    fprintf(file, "Process Name: %s\n", proc.ki_comm);
+    fprintf(file, "Virtual Memory Size: %lu KB\n", proc.ki_size / 1024);
+    fprintf(file, "Resident Set Size: %lu KB\n", proc.ki_rssize * getpagesize() / 1024);
+
+    // Close the file
+    fclose(file);
+}
+
+
 void dataset_performfill(void* ds, const double filling_factor, const uint64_t maximum_capacity) {
     const uint64_t capacity = filling_factor * maximum_capacity;
     std::vector<std::pair<uint64_t, uint64_t>> memdata;
@@ -57,10 +98,7 @@ void dataset_performfill(void* ds, const double filling_factor, const uint64_t m
         const uint64_t value    = hash_fn(next_value());
 
         ds_insert(ds, key, value);
-        uint64_t memory = ds_get_size(ds);
-        memdata.push_back({key_num, memory});
     }
-    logfileMemory.add_log("dataset_performfill", memdata);
 }
 
 int main(int argc, char *argv[]) {
@@ -94,7 +132,8 @@ int main(int argc, char *argv[]) {
     const double filling_factor = config_data["performfill"]["filling_factor"];
 
     void* ds = ds_init(capacity);
+    getCurrentProcessInfo('initial.txt');
     dataset_performfill(ds, filling_factor, capacity);
-    logfileMemory.save_logfile();
+    getCurrentProcessInfo('final.txt');
     return 0;
 }
