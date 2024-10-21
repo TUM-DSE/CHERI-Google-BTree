@@ -132,8 +132,8 @@ int main(int argc, char *argv[]) {
     const uint64_t capacity     = config_data["capacity"];
     const double filling_factor = config_data["performfill"]["filling_factor"];
 
-    void* ds = ds_init(capacity);
     getCurrentProcessInfo("initial_memory.txt");
+    void* ds = ds_init(capacity);
     dataset_performfill(ds, filling_factor, capacity);
     getCurrentProcessInfo("final_memory.txt");
     return 0;
