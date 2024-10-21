@@ -87,7 +87,7 @@ void dataset_performfill(const size_t num_threads, const size_t thread_id,
 
         std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     #ifdef __aarch64__
-        latencies.push_back({order.count(), 0});
+        latencies.push_back({order.count(), endCycle - startCycle});
     #else
         latencies.push_back({order.count(), duration.count()});
     #endif
@@ -112,16 +112,16 @@ void dataset_performquery(const size_t num_threads, const size_t thread_id, void
         }
         const uint64_t key      = hash_fn(key_num);
     #ifdef __aarch64__
-	    // startCycle = read_CNTPCT();
+	    startCycle = read_CNTPCT();
         _ds_read(ds, key);
-	    // endCycle   = read_CNTPCT();
+	    endCycle   = read_CNTPCT();
     #else 
         MEASURE_TIME(_ds_read(ds, key),  duration);
     #endif
         std::chrono::nanoseconds order = std::chrono::high_resolution_clock::now() - gstart_time;
     
     #ifdef __aarch64__
-	    latencies.push_back({order.count(), 0});
+	    latencies.push_back({order.count(), endCycle - startCycle});
     #else
 	    latencies.push_back({order.count(), duration.count()});
     #endif
