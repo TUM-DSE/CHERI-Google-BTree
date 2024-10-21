@@ -5,6 +5,8 @@
 from collections import defaultdict
 import tempfile, os, subprocess, json, os
 from src.benchmarks.benchmarks import IBenchmarks
+import math
+
 
 class YCSB(object):
     NAME_EXECUTABLE  = f'{os.path.dirname(os.path.abspath(__file__))}/ycsb'
@@ -52,8 +54,7 @@ class YCSB(object):
                 # calculate the variance for thoroughput
                 values = [x['run_thoroughput'] for x in bresults[workload]]
                 mean_value = sum(values) / self.__config['repetitions']
-                squared_diffs = [x - mean_value for x in values]
-                print("mean", mean_value, "   vals", values, "    std ", squared_diffs)
+                squared_diffs = math.sqrt(sum([x - mean_value for x in values]))
                 bresults[workload] = {
                     'run_runtime':      sum([x['run_runtime']     for x in bresults[workload]]) / self.__config['repetitions'],
                     'run_operations':   sum([x['run_operations']  for x in bresults[workload]]) / self.__config['repetitions'],
