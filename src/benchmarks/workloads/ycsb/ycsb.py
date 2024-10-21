@@ -54,12 +54,12 @@ class YCSB(object):
                 # calculate the variance for thoroughput
                 values = [x['run_thoroughput'] for x in bresults[workload]]
                 mean_value = sum(values) / self.__config['repetitions']
-                squared_diffs = math.sqrt(sum([x - mean_value for x in values]))
+                squared_diffs = math.sqrt(sum([(x - mean_value)**2 for x in values]))
                 bresults[workload] = {
                     'run_runtime':      sum([x['run_runtime']     for x in bresults[workload]]) / self.__config['repetitions'],
                     'run_operations':   sum([x['run_operations']  for x in bresults[workload]]) / self.__config['repetitions'],
                     'run_thoroughput':  sum([x['run_thoroughput'] for x in bresults[workload]]) / self.__config['repetitions'],
-                    'run_thoroughput_var':  sum(squared_diffs) / self.__config['repetitions']
+                    'run_thoroughput_var':  squared_diffs / self.__config['repetitions']
                 }
             
         json.dump(bresults, open(f'{output_path}/workload.json', 'w'))
