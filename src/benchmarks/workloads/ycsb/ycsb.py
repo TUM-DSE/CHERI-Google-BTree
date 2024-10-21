@@ -53,7 +53,7 @@ class YCSB(object):
                 values = [x['run_thoroughput'] for x in bresults[workload]]
                 mean_value = sum(values) / self.__config['repetitions']
                 squared_diffs = [(x - mean_value) ** 2 for x in values]
-                print("mean", mean_value, "    std ", squared_diffs/ self.__config['repetitions'])
+                print("mean", mean_value, "   vals", values, "    std ", sum(squared_diffs) / self.__config['repetitions'])
                 bresults[workload] = {
                     'run_runtime':      sum([x['run_runtime']     for x in bresults[workload]]) / self.__config['repetitions'],
                     'run_operations':   sum([x['run_operations']  for x in bresults[workload]]) / self.__config['repetitions'],
