@@ -6,49 +6,51 @@
         "clht_lf":  "./structures/clht_lf.so",
         "cuckoo":   "./structures/cuckoo.so",
         "art":      "./structures/art.so",
-        "cucktrie": "./structures/cucktrie.so",
         "stdlib":   "./structures/stdlib.so",
-        "tbb":      "./structures/tbb.so"
+        "tbb":      "./structures/tbb.so",
+	"btree":    "./structures/btree.so"
     },
     "benchmarks": {
         "normal_benchmark": {
             "benchmark": "MBench",
             "target": [
-                "tbb"
-            ],
+		    "tbb"
+	    ],
 
             "__comment": "the threadnum should be a list [] - usecases",
             "threadnum": [1, 2, 4],
-            
-            "capacity": 131072,
+            "capacity": 100000,
             "repetitions": 5,
+	    "format": "register",
             "perf": {
-                "do_profiling": false,
-                "events": "branch-misses,cache-misses,page-faults"
+                "do_profiling": true,
+                "events": "ll_cache_rd, ll_cache_miss_rd, l1d_cache_rd, l1d_cache_wr, l1d_cache_inval, br_pred, br_mis_pred"
             },
             
             "__distribution_types": "[uniform, zipfian]",
             "distribution": "zipfian",
         
             "performfill": {
-                "filling_factor": 0.95
+                "filling_factor": 1
             },
         
             "performquery": {
-                "query_factor":   0.7,
+                "query_factor":   1,
                 "success_factor": 0.5
             },
         
             "performdeletion": {
-                "deletion_factor":  0.7,
+                "deletion_factor":  1,
                 "success_factor":   0.5
             }
         },
         "normal_ycsb": {
             "benchmark": "YCSB",
-            "target": [
-                
-            ],
+	    "example__target": [
+	    ],
+            "target": [       
+	    	"art", "btree"
+	    ],
             
             "repetitions": 5,
             "__comment": "to execute load phase before each workload",
@@ -56,8 +58,9 @@
     
             "workloads": {
                 "workloada": {
-                    "recordcount": 1000000,
-                    "operationcount": 1000000,
+                    "recordcount": 100000,
+                    
+		    "operationcount": 1000000,
                     "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
     
                     "readallfields": true,
@@ -69,7 +72,8 @@
                     "requestdistribution": "zipfian"
                 },
                 "workloadb": {
-                    "recordcount": 1000000,
+                    "recordcount": 100000,
+
                     "operationcount": 1000000,
                     "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
     
@@ -83,8 +87,9 @@
                     "requestdistribution": "zipfian"
                 },
                 "workloadc": {
-                    "recordcount": 1000000,
-                    "operationcount": 1000000,
+                    "recordcount": 100000,
+                    
+		    "operationcount": 1000000,
                     "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
     
                     "readallfields": true,
@@ -95,7 +100,38 @@
                     "insertproportion": 0,
     
                     "requestdistribution": "zipfian"
-                }
+                },
+                "workloadd": {
+                    "recordcount": 100000,
+
+                    "operationcount": 1000000,
+
+                    "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
+
+                    "readallfields": true,
+
+                    "readproportion": 0.95,
+                    "updateproportion": 0,
+                    "scanproportion": 0,
+                    "insertproportion": 0.05,
+
+                    "requestdistribution": "latest"
+                },
+		"workloadf": {
+		    "recordcount": 100000,
+
+		    "operationcount": 1000000,
+	            "workload": "com.yahoo.ycsb.workloads.CoreWorkload",
+
+		    "readallfields": true,
+		    "readproportion": 0.5,
+		    "updateproportion": 0,
+		    "scanproportion": 0,
+		    "insertproportion": 0,
+		    "readmodifywriteproportion": 0.5,
+
+		    "requestdistribution": "zipfian"
+		}
             }
         }
     }

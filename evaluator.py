@@ -18,7 +18,7 @@ def perform_benchmarks(config: dict):
         for ntarget in btargets:
             benchmark.perform_benchmark(
                 libso_path=config['target'][ntarget], output_path=f'./output/{name}/{ntarget}')
-            if bconfig['perf']['do_profiling']:
+            if 'perf' in bconfig and 'do_profiling' in bconfig['perf'] and bconfig['perf']['do_profiling']:
                 benchmark.perform_perf(
                     libso_path=config['target'][ntarget], output_path=f'./output/{name}/{ntarget}')
 
