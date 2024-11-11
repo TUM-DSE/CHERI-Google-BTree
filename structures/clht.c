@@ -14,16 +14,26 @@
 #define MEM_SIZE            8
 #define MAXIMUM_BUCKET_NUM  131072 /* power of 2 */
 
+unsigned int closestPowerOf2(unsigned int n) {
+    if (n == 0) return 1;
+    unsigned int power = 1;
+    while (power < n) {
+        power <<= 1; // Left shift to get the next power of 2
+    }
+    return power;
+}
+
 void*   ds_init(uint64_t size) {
 #ifdef CLHT_LB
     uint64_t buckets = size / ENTRIES_PER_BUCKET;
 #elif CLHT_LF
+    size = closestPowerOf2(size);
     assert((size & (size - 1)) == 0);
     uint64_t buckets = size;
     /* check if power of 2 */
 #endif
 
-    if (buckets >= MAXIMUM_BUCKET_NUM) {
+    if (buckets > MAXIMUM_BUCKET_NUM) {
         buckets = MAXIMUM_BUCKET_NUM;
     }
 

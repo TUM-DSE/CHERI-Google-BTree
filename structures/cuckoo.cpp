@@ -3,9 +3,9 @@
 */
 
 #include "structure_interface.h"
-#include <libcuckoo/cuckoohash_map.hh>
-#include <libcuckoo/cuckoohash_config.hh>
-#include <libcuckoo/bucket_container.hh>
+#include "libcuckoo/cuckoohash_map.hh"
+#include "libcuckoo/cuckoohash_config.hh"
+#include "libcuckoo/bucket_container.hh"
 
 /* documentation: https://efficient.github.io/libcuckoo/ */
 
@@ -46,7 +46,8 @@ int     ds_update(void* ds, uint64_t key, uint64_t value) {
 int     ds_read(void* ds, uint64_t key) {
     libcuckoo::cuckoohash_map<uint64_t, uint64_t>* dc =
         static_cast<libcuckoo::cuckoohash_map<uint64_t, uint64_t> *>(ds);
-    return dc->find(key);
+    dc->find(key);
+    return true;
 }
 
 int     ds_read_range(void* ds, uint64_t key, uint64_t len) {
