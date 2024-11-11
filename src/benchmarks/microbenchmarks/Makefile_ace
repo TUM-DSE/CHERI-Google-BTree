@@ -3,7 +3,7 @@
 # flags: DIFF_CPU_EXEC - each thread will be executed on a different CPU core
 
 GCC    = clang-morello
-CFLAGS = -lstdc++ -DDIFF_CPU_EXEC -march=morello -mabi=purecap -pthread -g
+CFLAGS = -lstdc++ -DDIFF_CPU_EXEC -march=morello -mabi=purecap -pthread
 
 
 INCLUDES := -Ijsonutility/include

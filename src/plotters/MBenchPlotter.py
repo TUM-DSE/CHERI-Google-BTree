@@ -27,7 +27,6 @@ class MBenchPlotter(IPlotter):
         max_means = []
 
         for threadval in threadnum:
-            print(save_dir)
             dataset = log_latency[f'{threadval}'][fname]
 
             means, stds = [], []
@@ -99,4 +98,4 @@ class MBenchPlotter(IPlotter):
         self.__plot_latency(config, log_latency, 'dataset_performfill', 'Insert', dir)
         self.__plot_latency(config, log_latency, 'dataset_performquery', 'Query', dir)
         self.__plot_latency(config, log_latency, 'dataset_performdeletion', 'Deletion', dir)
-        # self.__plot_memoryusage(config, log_memory, dir)
+        self.__plot_memoryusage(config, log_memory, dir)

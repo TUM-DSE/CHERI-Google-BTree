@@ -167,7 +167,7 @@ class DB {
     }
 
     /* initialize the datastructure */
-    this->generic_structure = this->ds_init(0);
+    this->generic_structure = this->ds_init(100000);
     return 0;
   }
   
