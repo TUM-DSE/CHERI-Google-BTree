@@ -4,14 +4,16 @@
 # Morello-specific compiler and flags
 CC        = clang-morello
 CFLAGS    = -fpic -shared
-MORELLO_FLAGS = -march=morello -mabi=purecap -g -O0 -fpic -shared
+MORELLO_FLAGS = -fpic -shared -march=morello -mabi=purecap
 # linker flags
 LDFLAGS   = -Wl,-z,now -Wl,-z,relro
 
 # All binaries
 ALL =  libclht_gc libclht_lb libclht_lb.a clht_lb libclht_lf libclht_lf.a clht_lf \
-	   libclht_lf_res libclht_lf_res.a clht_lf_res cuckoo stdlib tbb
+	   libclht_lf_res libclht_lf_res.a clht_lf_res cuckoo stdlib tbb btree art
 all: $(ALL)
+
+$(CURDIR) = .
 
 # CLHT section
 CLHT_PATH     = ./CLHT
@@ -60,7 +62,7 @@ clht_lf_res:
 
 # libcuckoo section
 LIBCUCKOO_INCLUDE := -Ilibcuckoo
-LIBCUCKOO_PATH = /scratch/christian/cheridb/structures/libcuckoo
+LIBCUCKOO_PATH = ./libcuckoo
 
 cuckoo:
 	   $(CC) $(CFLAGS) $(MORELLO_FLAGS) $(LIBCUCKOO_INCLUDE) cuckoo.cpp -o cuckoo.so $(LDFLAGS)
@@ -89,10 +91,18 @@ stdlib:
 # tbb section
 TBB_PATH := ./oneTBB
 TBB_INCLUDE := -I$(TBB_PATH)/include
-TBB_LDLIBS = -L $(TBB_PATH)/lib -ltbb
+TBB_LDLIBS = -L$(TBB_PATH)/lib -ltbb
 
 tbb:
 	$(CC) $(MORELLO_FLAGS) $(TBB_INCLUDE) $(TBB_LDLIBS) tbb.cpp -o tbb.so 
+
+btree:
+	$(CC) $(MORELLO_FLAGS) btree.cpp -o btree.so
+
+# art section
+ART_PATH        = -I./adaptive-radix-tree/include
+art:
+	$(CC) $(MORELLO_FLAGS) $(ART_PATH) art.cpp -o art.so
 
 clean:
 	rm -f *.so *.a *.o
