@@ -1,0 +1,170 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/local64/share/cmake/Modules/CMakeDetermineSystem.cmake:204 (message)"
+      - "CMakeLists.txt:17 (project)"
+    message: |
+      The system is: FreeBSD - 15.0-CURRENT - aarch64c
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/local64/share/cmake/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "/usr/local64/share/cmake/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "/usr/local64/share/cmake/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:17 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: /usr/local64/bin/clang++ 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "a.out"
+      
+      The CXX compiler identification is Clang, found in:
+        /home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/3.26.1/CompilerIdCXX/a.out
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/usr/local64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "/usr/local64/share/cmake/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:17 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq"
+      binary: "/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: /home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq
+        
+        Run Build Command(s):/usr/local64/bin/cmake -E env VERBOSE=1 /usr/local64/bin/gmake -f Makefile cmTC_20b40/fast && /usr/local64/bin/gmake  -f CMakeFiles/cmTC_20b40.dir/build.make CMakeFiles/cmTC_20b40.dir/build
+        gmake[1]: Entering directory '/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq'
+        Building CXX object CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o
+        /usr/local64/bin/clang++   -v -MD -MT CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local64/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        clang version 14.0.0
+        Target: aarch64-unknown-freebsd15.0
+        Thread model: posix
+        InstalledDir: /usr/local64/llvm-morello/bin
+         (in-process)
+         "/usr/local64/llvm-morello/bin/clang-14" -cc1 -triple aarch64-unknown-freebsd15.0 -emit-obj -mrelax-all --mrelax-relocations -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model static -mframe-pointer=non-leaf -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu generic -target-feature +neon -target-feature +v8a -target-abi aapcs -mllvm -cheri-cap-table-abi=pcrel -fallow-half-arguments-and-returns -mllvm -treat-scalable-fixed-error-as-warning -debugger-tuning=gdb -v -fcoverage-compilation-dir=/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq -resource-dir /usr/local64/llvm-morello/lib/clang/14.0.0 -dependency-file CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/include/c++/v1 -fdeprecated-macro -fdebug-compilation-dir=/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq -ferror-limit 19 -fno-signed-char -fgnuc-version=4.2.1 -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/local64/share/cmake/Modules/CMakeCXXCompilerABI.cpp
+        clang -cc1 version 14.0.0 based upon LLVM 14.0.0git default target aarch64-unknown-freebsd15.0
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /usr/include/c++/v1
+         /usr/local64/llvm-morello/lib/clang/14.0.0/include
+         /usr/include
+        End of search list.
+        Linking CXX executable cmTC_20b40
+        /usr/local64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_20b40.dir/link.txt --verbose=1
+        /usr/local64/bin/clang++  -v CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_20b40 
+        clang version 14.0.0
+        Target: aarch64-unknown-freebsd15.0
+        Thread model: posix
+        InstalledDir: /usr/local64/llvm-morello/bin
+         "/usr/local64/llvm-morello/bin/ld" --eh-frame-hdr -dynamic-linker /libexec/ld-elf.so.1 --enable-new-dtags -o cmTC_20b40 /usr/lib64/crt1.o /usr/lib64/crti.o /usr/lib64/crtbegin.o -L/usr/lib64 CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o --start-group -lc++ -lm -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed --end-group /usr/lib64/crtend.o /usr/lib64/crtn.o
+        gmake[1]: Leaving directory '/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq'
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/local64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:127 (message)"
+      - "/usr/local64/share/cmake/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:17 (project)"
+    message: |
+      Parsed CXX implicit include dir info: rv=done
+        found start of include info
+        found start of implicit include info
+          add: [/usr/include/c++/v1]
+          add: [/usr/local64/llvm-morello/lib/clang/14.0.0/include]
+          add: [/usr/include]
+        end of search list found
+        collapse include dir [/usr/include/c++/v1] ==> [/usr/include/c++/v1]
+        collapse include dir [/usr/local64/llvm-morello/lib/clang/14.0.0/include] ==> [/usr/local64/llvm-morello/lib/clang/14.0.0/include]
+        collapse include dir [/usr/include] ==> [/usr/include]
+        implicit include dirs: [/usr/include/c++/v1;/usr/local64/llvm-morello/lib/clang/14.0.0/include;/usr/include]
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "/usr/local64/share/cmake/Modules/CMakeDetermineCompilerABI.cmake:152 (message)"
+      - "/usr/local64/share/cmake/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:17 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld\\.lld|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        ignore line: [Change Dir: /home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq]
+        ignore line: []
+        ignore line: [Run Build Command(s):/usr/local64/bin/cmake -E env VERBOSE=1 /usr/local64/bin/gmake -f Makefile cmTC_20b40/fast && /usr/local64/bin/gmake  -f CMakeFiles/cmTC_20b40.dir/build.make CMakeFiles/cmTC_20b40.dir/build]
+        ignore line: [gmake[1]: Entering directory '/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq']
+        ignore line: [Building CXX object CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o]
+        ignore line: [/usr/local64/bin/clang++   -v -MD -MT CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -MF CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o.d -o CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -c /usr/local64/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [clang version 14.0.0]
+        ignore line: [Target: aarch64-unknown-freebsd15.0]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: /usr/local64/llvm-morello/bin]
+        ignore line: [ (in-process)]
+        ignore line: [ "/usr/local64/llvm-morello/bin/clang-14" -cc1 -triple aarch64-unknown-freebsd15.0 -emit-obj -mrelax-all --mrelax-relocations -disable-free -clear-ast-before-backend -disable-llvm-verifier -discard-value-names -main-file-name CMakeCXXCompilerABI.cpp -mrelocation-model static -mframe-pointer=non-leaf -ffp-contract=on -fno-rounding-math -mconstructor-aliases -funwind-tables=2 -target-cpu generic -target-feature +neon -target-feature +v8a -target-abi aapcs -mllvm -cheri-cap-table-abi=pcrel -fallow-half-arguments-and-returns -mllvm -treat-scalable-fixed-error-as-warning -debugger-tuning=gdb -v -fcoverage-compilation-dir=/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq -resource-dir /usr/local64/llvm-morello/lib/clang/14.0.0 -dependency-file CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o.d -MT CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -sys-header-deps -internal-isystem /usr/include/c++/v1 -fdeprecated-macro -fdebug-compilation-dir=/home/cristian/cheridb_nocap/structures/google-btree/CMakeFiles/CMakeScratch/TryCompile-X8Rupq -ferror-limit 19 -fno-signed-char -fgnuc-version=4.2.1 -fcxx-exceptions -fexceptions -faddrsig -D__GCC_HAVE_DWARF2_CFI_ASM=1 -o CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -x c++ /usr/local64/share/cmake/Modules/CMakeCXXCompilerABI.cpp]
+        ignore line: [clang -cc1 version 14.0.0 based upon LLVM 14.0.0git default target aarch64-unknown-freebsd15.0]
+        ignore line: [#include "..." search starts here:]
+        ignore line: [#include <...> search starts here:]
+        ignore line: [ /usr/include/c++/v1]
+        ignore line: [ /usr/local64/llvm-morello/lib/clang/14.0.0/include]
+        ignore line: [ /usr/include]
+        ignore line: [End of search list.]
+        ignore line: [Linking CXX executable cmTC_20b40]
+        ignore line: [/usr/local64/bin/cmake -E cmake_link_script CMakeFiles/cmTC_20b40.dir/link.txt --verbose=1]
+        ignore line: [/usr/local64/bin/clang++  -v CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o -o cmTC_20b40 ]
+        ignore line: [clang version 14.0.0]
+        ignore line: [Target: aarch64-unknown-freebsd15.0]
+        ignore line: [Thread model: posix]
+        ignore line: [InstalledDir: /usr/local64/llvm-morello/bin]
+        link line: [ "/usr/local64/llvm-morello/bin/ld" --eh-frame-hdr -dynamic-linker /libexec/ld-elf.so.1 --enable-new-dtags -o cmTC_20b40 /usr/lib64/crt1.o /usr/lib64/crti.o /usr/lib64/crtbegin.o -L/usr/lib64 CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o --start-group -lc++ -lm -lgcc --as-needed -lgcc_s --no-as-needed -lc -lgcc --as-needed -lgcc_s --no-as-needed --end-group /usr/lib64/crtend.o /usr/lib64/crtn.o]
+          arg [/usr/local64/llvm-morello/bin/ld] ==> ignore
+          arg [--eh-frame-hdr] ==> ignore
+          arg [-dynamic-linker] ==> ignore
+          arg [/libexec/ld-elf.so.1] ==> ignore
+          arg [--enable-new-dtags] ==> ignore
+          arg [-o] ==> ignore
+          arg [cmTC_20b40] ==> ignore
+          arg [/usr/lib64/crt1.o] ==> obj [/usr/lib64/crt1.o]
+          arg [/usr/lib64/crti.o] ==> obj [/usr/lib64/crti.o]
+          arg [/usr/lib64/crtbegin.o] ==> obj [/usr/lib64/crtbegin.o]
+          arg [-L/usr/lib64] ==> dir [/usr/lib64]
+          arg [CMakeFiles/cmTC_20b40.dir/CMakeCXXCompilerABI.cpp.o] ==> ignore
+          arg [--start-group] ==> ignore
+          arg [-lc++] ==> lib [c++]
+          arg [-lm] ==> lib [m]
+          arg [-lgcc] ==> lib [gcc]
+          arg [--as-needed] ==> ignore
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [--no-as-needed] ==> ignore
+          arg [-lc] ==> lib [c]
+          arg [-lgcc] ==> lib [gcc]
+          arg [--as-needed] ==> ignore
+          arg [-lgcc_s] ==> lib [gcc_s]
+          arg [--no-as-needed] ==> ignore
+          arg [--end-group] ==> ignore
+          arg [/usr/lib64/crtend.o] ==> obj [/usr/lib64/crtend.o]
+          arg [/usr/lib64/crtn.o] ==> obj [/usr/lib64/crtn.o]
+        collapse library dir [/usr/lib64] ==> [/usr/lib64]
+        implicit libs: [c++;m;gcc;gcc_s;c;gcc;gcc_s]
+        implicit objs: [/usr/lib64/crt1.o;/usr/lib64/crti.o;/usr/lib64/crtbegin.o;/usr/lib64/crtend.o;/usr/lib64/crtn.o]
+        implicit dirs: [/usr/lib64]
+        implicit fwks: []
+      
+      
+...

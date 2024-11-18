@@ -1,0 +1,1 @@
+/usr/local64/bin/clang++ -g -O2 CMakeFiles/btree_test.dir/btree_test.cc.o CMakeFiles/btree_test.dir/btree_test_flags.cc.o -o btree_test  -lgtest_main -lgtest -lgflags 
